@@ -27,7 +27,7 @@ release-mac: build-release
 
 release-win: build-release
 	mkdir -p release
-	tar -C ./target/release/ -czvf ./release/gnostr-tui-win.tar.gz ./gnostr-tui
+	tar -C ./target/release/ -czvf ./release/gnostr-tui-win.tar.gz ./gnostr-tui.exe
 	cargo install cargo-wix --version 0.3.3
 	cargo wix -p gnostr-tui --no-build --nocapture --output ./release/gnostr-tui.msi
 	ls -l ./release/gnostr-tui.msi
@@ -38,24 +38,13 @@ release-linux-musl: build-linux-musl-release
 	tar -C ./target/x86_64-unknown-linux-musl/release/ -czvf ./release/gnostr-tui-linux-musl.tar.gz ./gnostr-tui
 
 build-linux-musl-debug:
-	TARGET_CC=x86_64-linux-musl-gcc cargo build            --target x86_64-unknown-linux-musl
+	cargo build --target=x86_64-unknown-linux-musl
 
 build-linux-musl-release:
-	TARGET_CC=x86_64-linux-musl-gcc cargo build --release --target x86_64-unknown-linux-musl
+	cargo build --release --target=x86_64-unknown-linux-musl
 
 test-linux-musl:
-	@cargo clean --target x86_64-unknown-linux-musl
-	CC=x86_64-linux-musl-gcc \
-CXX=x86_64-linux-musl-g++ \
-AS=x86_64-linux-musl-as \
-##AR=x86_64-linux-musl-gcc-ar \
-NM=x86_64-linux-musl-gcc-nm \
-RANLIB=x86_64-linux-musl-gcc-ranlib \
-LD=x86_64-linux-musl-ld \
-STRIP=x86_64-linux-musl-strip \
-TARGET_CC=x86_64-linux-musl-gcc cargo test --workspace --target x86_64-unknown-linux-musl || \
-cargo test --workspace --target x86_64-unknown-linux-musl
-
+	cargo test --workspace --target=x86_64-unknown-linux-musl
 
 release-linux-arm: build-linux-arm-release
 	mkdir -p release
