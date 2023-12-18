@@ -5,11 +5,13 @@ PROJECT_NAME                            := $(project)
 endif
 export PROJECT_NAME
 
-## https://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles
-## CARGO_PROFILE_RELEASE_DEBUG
+##	:
+## doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles
 ifeq ($(profile),)
+## make profile=release
 PROFILE=release
 else
+## make profile=release-with-debug
 PROFILE=release-with-debug
 endif
 
@@ -101,19 +103,39 @@ export HELP2MAN
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 help:## 	help
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
+##	:
+## RUSTUP
 rustup-install:rustup-install-stable## 	rustup-install
 rustup-install-stable:## 	rustup-install-stable
-##	install rustup sequence
 	$(shell echo which rustup) || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain stable --profile default || . "$(HOME)/.cargo/env" || true
 	$(shell echo which rustup) && rustup default stable
 rustup-install-nightly:## 	rustup-install-nightly
-##	install rustup sequence
 	$(shell echo which rustup) || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain nightly --profile default || . "$(HOME)/.cargo/env" || true
 	$(shell echo which rustup) && rustup default nightly
 
-rustup-target-add:
+
+rustup-target-add:## 	rustup-target-add
+## rustup target add x86_64-unknown-linux-musl
 	rustup target add x86_64-unknown-linux-musl
+## rustup target add aarch64-unknown-linux-gnu
 	rustup target add aarch64-unknown-linux-gnu
+	rustup target add aarch64-unknown-linux-gnu
+## ARM64 Linux (kernel 4.1, glibc 2.17+) 1
+	rustup target add i686-pc-windows-gnu
+## 32-bit MinGW (Windows 7+) 2 3
+	rustup target add i686-pc-windows-msvc
+## 32-bit MSVC (Windows 7+) 2 3
+	rustup target add i686-unknown-linux-gnu
+## 32-bit Linux (kernel 3.2+, glibc 2.17+) 3
+	rustup target add x86_64-apple-darwin
+## 64-bit macOS (10.12+, Sierra+)
+	rustup target add x86_64-pc-windows-gnu
+## 64-bit MinGW (Windows 7+) 2
+	rustup target add x86_64-pc-windows-msvc
+## 64-bit MSVC (Windows 7+) 2
+	rustup target add x86_64-unknown-linux-gnu
+## 64-bit Linux (kernel 3.2+, glibc 2.17+)
+##	:
 
 cargo-b:## 	cargo-b
 	[ -x "$(shell command -v $(RUSTUP))" ] || $(MAKE) rustup-install-stable
