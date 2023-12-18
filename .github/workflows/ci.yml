@@ -78,7 +78,7 @@ jobs:
       run: make test
 
     - name: make release-linux-musl #test-linux-musl
-      if: matrix.os != 'windows-latest && matrix.os != 'macos-latest'
+      if: matrix.os != 'windows-latest || matrix.os != 'macos-latest'
       run: make release-linux-musl #test-linux-musl
 
     - name: Run clippy
