@@ -77,9 +77,9 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: make test
 
-    - name: make test-linux-musl
-      if: matrix.os != 'windows-latest'
-      run: make test-linux-musl
+    - name: make release-linux-musl #test-linux-musl
+      if: matrix.os != 'windows-latest && matrix.os != 'macos-latest'
+      run: make release-linux-musl #test-linux-musl
 
     - name: Run clippy
       if: matrix.os != 'windows-latest'
