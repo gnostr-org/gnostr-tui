@@ -43,7 +43,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         cargo clean -p serde_derive -p thiserror
-        brew install filosottile/musl-cross/musl-cross
+        #brew install filosottile/musl-cross/musl-cross
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@master
