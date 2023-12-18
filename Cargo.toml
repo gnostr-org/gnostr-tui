@@ -34,7 +34,7 @@ indexmap = "1.9"
 itertools = "0.12"
 log = "0.4"
 notify = "5.1"
-notify-debouncer-mini = "0.2"
+notify-debouncer-mini = "0.4"
 once_cell = "1"
 ratatui = { version = "0.21", default-features = false, features = ['crossterm', 'serde'] }
 rayon-core = "1.11"
