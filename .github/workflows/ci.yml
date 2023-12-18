@@ -23,93 +23,98 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
         set-safe-directory: 'true'
 
-    - name: git submodule update --init --recursiv
+    - name: git-submodule-update-${{ matrix.os }}
       run: |
-        git submodule update --init --recursive
+        git submodule update --init --recursive || true
 
-    - name: Restore cargo cache
+    - name: restore-cargo-cache-${{ matrix.os }}
+      if: ${{ !env.ACT }}
       uses: Swatinem/rust-cache@v2
       env:
         cache-name: ci
       with:
         shared-key: ${{ matrix.os }}-${{ env.cache-name }}-${{ matrix.rust }}
 
-    - name: MacOS Workaround
+    - name: MacOS-Workaround-${{ matrix.rust }}
+      #${{ if in(matrix.os, 'macos', 'latest') }}:
       if: matrix.os == 'macos-latest'
+      #if: ${{ !env.ACT }}
       run: |
         cargo clean -p serde_derive -p thiserror
         #brew install filosottile/musl-cross/musl-cross
 
-    - name: Install Rust
+    - name: Install-Rust-${{ matrix.os }}
+      if: ${{ !env.ACT }}
       uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.rust }}
         components: clippy
 
-    - name: make rustup-install
+    - name: make-rustup-install-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         make rustup-install || true
         command -v apt-get && sudo apt-get update -y || true
         command -v apt-get && sudo apt-get -y install musl-tools || true #command -v brew && brew install filosottile/musl-cross/musl-cross || true
 
-    - name: make rustup-target-add
+    - name: make-rustup-target-add-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         make rustup-target-add
 
-    - name: make cargo-b
+    - name: make-cargo-b-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         make cargo-b || cargo b
 
-    - name: make cargo-b-release
+    - name: make-cargo-b-release-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         make cargo-b-release || cargo b --release
 
-    - name: Run tests
+    - name: run-tests-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: make test
 
-    - name: make release-linux-musl #test-linux-musl
+    - name: make-release-linux-musl-${{ matrix.os }} #test-linux-musl
       if: matrix.os != 'oops'
       run: make release-linux-musl #test-linux-musl
 
-    - name: Run clippy
+    - name: run-clippy-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         make clippy || cargo clippy
 
-    - name: Build Release
+    - name: build-release-${{ matrix.os }}
       #if: matrix.os != 'windows-latest'
       run: make build-release || cargo b --release
 
-    - name: Test Install
+    - name: test-install-${{ matrix.os }}
       #if: matrix.os != 'windows-latest'
       run: cargo install --path "." --force --locked
 
-    - name: Binary Size (unix)
+    - name: binary-size-(unix)-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
       run: |
         ls -l ./target/release/gnostr-tui
 
-    - name: Binary Size (win)
+    - name: binary-Size-(win)-${{ matrix.os }}
       if: matrix.os == 'windows-latest'
       run: |
         ls -l ./target/release
 
-    - name: Binary dependencies (mac)
+    - name: binary-dependencies-(mac)
       if: matrix.os == 'macos-latest'
       run: |
         otool -L ./target/release/gnostr-tui
 
-    - name: Build MSI (windows)
+    - name: build-MSI-(windows)
       if: matrix.os == 'windows-latest'
       run: |
         cargo install cargo-wix --version 0.3.3
@@ -131,14 +136,14 @@ jobs:
         submodules: 'recursive'
         set-safe-directory: 'true'
 
-    - name: Restore cargo cache
+    - name: restore-cargo-cache
       uses: Swatinem/rust-cache@v2
       env:
         cache-name: ci
       with:
         key: ubuntu-latest-${{ env.cache-name }}-${{ matrix.rust }}
 
-    - name: Install Rust
+    - name: install-rust
       uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.rust }}
@@ -146,15 +151,15 @@ jobs:
 
     # The build would fail without manually installing the target.
     # https://github.com/dtolnay/rust-toolchain/issues/83
-    - name: Manually install target
+    - name: manually-install-target
       if: matrix.os != 'windows-latest'
       run: rustup target add x86_64-unknown-linux-musl
 
-    - name: Setup MUSL
+    - name: setup-musl
       if: matrix.os != 'windows-latest'
       run: |
         sudo apt-get -qq update
-        sudo apt-get -qq install musl-tools
+        sudo apt-get -qq install musl-tools || brew install filosottile/musl-cross/musl-cross || true
     - name: Build Debug
       if: matrix.os != 'windows-latest'
       run: |
@@ -185,6 +190,7 @@ jobs:
     continue-on-error: ${{ matrix.rust == 'nightly' }}
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
@@ -233,6 +239,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
@@ -240,6 +247,7 @@ jobs:
 
     - name: Restore cargo cache
       uses: Swatinem/rust-cache@v2
+      if: ${{ !env.ACT }}
       env:
         cache-name: ci
       with:
@@ -247,6 +255,7 @@ jobs:
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
+      if: ${{ !env.ACT }}
       with:
         components: rustfmt
 
@@ -278,6 +287,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
@@ -285,6 +295,7 @@ jobs:
 
     - name: Restore cargo cache
       uses: Swatinem/rust-cache@v2
+      if: ${{ !env.ACT }}
       env:
         cache-name: ci
       with:
@@ -305,12 +316,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
         set-safe-directory: 'true'
 
     - uses: rustsec/audit-check@v1
+      if: ${{ !env.ACT }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         ignore: RUSTSEC-2020-0071, RUSTSEC-2022-0004, RUSTSEC-2022-0011
@@ -320,6 +333,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
       with:
         fetch-depth: '10'
         submodules: 'recursive'
@@ -328,9 +342,11 @@ jobs:
     - name: Extract release notes
       id: extract_release_notes
       uses: ffurrer2/extract-release-notes@v1
+      if: ${{ !env.ACT }}
       with:
         release_notes_file: ./release-notes.txt
     - uses: actions/upload-artifact@v3
+      if: ${{ !env.ACT }}
       with:
         name: release-notes.txt
         path: ./release-notes.txt
