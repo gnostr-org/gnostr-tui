@@ -56,7 +56,7 @@ jobs:
       run: |
         make rustup-install
         command -v sudo && sudo apt-get update -y
-        command -v sudo && sudo apt-get -y install musl-gcc || command -v brew &&  brew install filosottile/musl-cross/musl-cross
+        command -v sudo && sudo apt-get -y install musl-tools || command -v brew &&  brew install filosottile/musl-cross/musl-cross
 
     - name: make rustup-target-add
       if: matrix.os != 'windows-latest'
