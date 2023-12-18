@@ -41,7 +41,9 @@ jobs:
 
     - name: MacOS Workaround
       if: matrix.os == 'macos-latest'
-      run: cargo clean -p serde_derive -p thiserror
+      run: |
+        cargo clean -p serde_derive -p thiserror
+        brew install filosottile/musl-cross/musl-cross
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@master
@@ -53,6 +55,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         make rustup-install
+        apt-get install musl-gcc || brew install filosottile/musl-cross/musl-cross
 
     - name: make rustup-target-add
       if: matrix.os != 'windows-latest'
