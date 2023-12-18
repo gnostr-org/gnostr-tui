@@ -56,7 +56,7 @@ jobs:
       run: |
         make rustup-install
         command -v apt-get && sudo apt-get update -y
-        command -v apt-get && sudo apt-get -y install musl-tools || command -v brew && brew install filosottile/musl-cross/musl-cross
+        command -v apt-get && sudo apt-get -y install musl-tools || command -v brew && brew install filosottile/musl-cross/musl-cross || true
 
     - name: make rustup-target-add
       if: matrix.os != 'windows-latest'
@@ -158,13 +158,13 @@ jobs:
     - name: Build Debug
       if: matrix.os != 'windows-latest'
       run: |
-        TARGET_CC=x86_64-linux-musl-gcc cargo build           --target x86_64-unknown-linux-musl
+        TARGET_CC=x86_64-linux-musl-gcc cargo build           --target x86_64-unknown-linux-musl || true
         make build-linux-musl-debug
         ./target/x86_64-unknown-linux-musl/debug/gnostr-tui --version
     - name: Build Release
       if: matrix.os != 'windows-latest'
       run: |
-        TARGET_CC=x86_64-linux-musl-gcc cargo build --release --target x86_64-unknown-linux-musl
+        TARGET_CC=x86_64-linux-musl-gcc cargo build --release --target x86_64-unknown-linux-musl || true
         make build-linux-musl-release
         ./target/x86_64-unknown-linux-musl/release/gnostr-tui --version
         ls -l ./target/x86_64-unknown-linux-musl/release/gnostr-tui
