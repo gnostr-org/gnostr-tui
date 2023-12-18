@@ -60,6 +60,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         make rustup-install || true
+        make rustup-target-add || true
         command -v apt-get && sudo apt-get update -y || true
         command -v apt-get && sudo apt-get -y install musl-tools || true #command -v brew && brew install filosottile/musl-cross/musl-cross || true
 
@@ -84,7 +85,7 @@ jobs:
 
     - name: make-release-linux-musl-${{ matrix.os }} #test-linux-musl
       if: matrix.os != 'oops'
-      run: make release-linux-musl #test-linux-musl
+      run: make rustup-target-add release-linux-musl #test-linux-musl
 
     - name: run-clippy-${{ matrix.os }}
       if: matrix.os != 'windows-latest'
