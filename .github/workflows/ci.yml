@@ -153,6 +153,7 @@ jobs:
     - name: Setup MUSL
       if: matrix.os != 'windows-latest'
       run: |
+        sudo apt-get -qq update
         sudo apt-get -qq install musl-tools
     - name: Build Debug
       if: matrix.os != 'windows-latest'
