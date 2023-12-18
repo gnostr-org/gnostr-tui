@@ -44,7 +44,16 @@ build-linux-musl-release:
 	TARGET_CC=x86_64-linux-musl-gcc cargo build --release --target x86_64-unknown-linux-musl
 
 test-linux-musl:
-	TARGET_CC=x86_64-linux-musl-gcc cargo test --workspace --target x86_64-unknown-linux-musl
+	@cargo clean --target x86_64-unknown-linux-musl
+	CC=x86_64-linux-musl-gcc \
+CXX=x86_64-linux-musl-g++ \
+AS=x86_64-linux-musl-as \
+AR=x86_64-linux-musl-gcc-ar \
+NM=x86_64-linux-musl-gcc-nm \
+RANLIB=x86_64-linux-musl-gcc-ranlib \
+LD=x86_64-linux-musl-ld \
+STRIP=x86_64-linux-musl-strip \
+TARGET_CC=x86_64-linux-musl-gcc cargo test --workspace --target x86_64-unknown-linux-musl
 
 release-linux-arm: build-linux-arm-release
 	mkdir -p release
