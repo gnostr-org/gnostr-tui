@@ -160,8 +160,8 @@ jobs:
     - name: setup-musl
       if: matrix.os != 'windows-latest'
       run: |
-        sudo apt-get -qq update
-        sudo apt-get -qq install musl-tools || brew install filosottile/musl-cross/musl-cross || true
+        sudo apt-get -qq -y update
+        sudo apt-get -qq -y install musl-tools || brew install filosottile/musl-cross/musl-cross || true
     - name: Build Debug
       if: matrix.os != 'windows-latest'
       run: |
