@@ -48,7 +48,7 @@ test-linux-musl:
 	CC=x86_64-linux-musl-gcc \
 CXX=x86_64-linux-musl-g++ \
 AS=x86_64-linux-musl-as \
-AR=x86_64-linux-musl-gcc-ar \
+##AR=x86_64-linux-musl-gcc-ar \
 NM=x86_64-linux-musl-gcc-nm \
 RANLIB=x86_64-linux-musl-gcc-ranlib \
 LD=x86_64-linux-musl-ld \
