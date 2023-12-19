@@ -53,7 +53,9 @@ NM=x86_64-linux-musl-gcc-nm \
 RANLIB=x86_64-linux-musl-gcc-ranlib \
 LD=x86_64-linux-musl-ld \
 STRIP=x86_64-linux-musl-strip \
-TARGET_CC=x86_64-linux-musl-gcc cargo test --workspace --target x86_64-unknown-linux-musl
+TARGET_CC=x86_64-linux-musl-gcc cargo test --workspace --target x86_64-unknown-linux-musl || \
+cargo test --workspace --target x86_64-unknown-linux-musl
+
 
 release-linux-arm: build-linux-arm-release
 	mkdir -p release
