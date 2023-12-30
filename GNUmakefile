@@ -96,7 +96,7 @@ RUSTC:=$(shell which rustc)
 export RUSTC
 RUSTUP:=$(shell which rustup)
 export RUSTUP
-BREW:=brew#$(shell which brew)
+BREW:=$(shell which brew)
 export BREW
 APT_GET:=$(shell which apt-get)
 export APT_GET
@@ -113,15 +113,15 @@ help:## 	help
 rustup-install:rustup-install-stable## 	rustup-install
 rustup-install-stable:## 	rustup-install-stable
 	[ -x "$(shell command -v $(APT_GET))" ] && sudo $(APT_GET) -y install musl-tools || \
-	[ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross
+    [ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross || true
 	[ -x "$(shell command -v $(RUSTUP))" ] || \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain stable --profile default || \
     . "$(HOME)/.cargo/env" || true
 	[ -x "$(shell command -v $(RUSTUP))" ] && $(RUSTUP) default stable
 
 rustup-install-nightly:## 	rustup-install-nightly
-	[ -x "$(shell command -v $(APT_GET))" ] && && sudo $(APT_GET) -y install musl-tools || \
-	[ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross
+	[ -x "$(shell command -v $(APT_GET))" ] && sudo $(APT_GET) -y install musl-tools || \
+    [ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross || true
 	[ -x "$(shell command -v $(RUSTUP))" ] || \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain nightly --profile default || \
     . "$(HOME)/.cargo/env" || true
