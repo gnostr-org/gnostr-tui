@@ -96,6 +96,10 @@ RUSTC:=$(shell which rustc)
 export RUSTC
 RUSTUP:=$(shell which rustup)
 export RUSTUP
+BREW:=$(shell which brew)
+export BREW
+APT_GET:=$(shell which apt-get)
+export APT_GET
 
 HELP2MAN:=$(shell which help2man)
 export HELP2MAN
@@ -105,22 +109,26 @@ help:## 	help
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
 ##	:
 ## RUSTUP
+
 rustup-install:rustup-install-stable## 	rustup-install
+
 rustup-install-stable:## 	rustup-install-stable
-	$(shell echo which apt-get) && sudo apt-get update -y && sudo apt-get -y install musl-tools || \
-    command -v brew && brew install filosottile/musl-cross/musl-cross
-	$(shell echo which rustup) || \
+	[ -x "$(shell command -v $(APT_GET))" ] && \
+    sudo $(APT_GET) update -y && sudo $(APT_GET) -y install musl-tools || \
+	[ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross
+	[ -x "$(shell command -v $(RUSTUP))" ] || \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path \
     --default-toolchain stable --profile default || . "$(HOME)/.cargo/env" || true
-	$(shell echo which rustup) && rustup default stable
+	[ -x "$(shell command -v $(RUSTUP))" ] && $(RUSTUP) default stable
+
 rustup-install-nightly:## 	rustup-install-nightly
-	$(shell echo which apt-get) && sudo apt-get update -y && sudo apt-get -y install musl-tools || \
-    command -v brew && brew install filosottile/musl-cross/musl-cross
-	$(shell echo which rustup) || \
+	[ -x "$(shell command -v $(APT_GET))" ] && \
+    sudo $(APT_GET) update -y && sudo $(APT_GET) -y install musl-tools || \
+	[ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross
+	[ -x "$(shell command -v $(RUSTUP))" ] || \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path \
     --default-toolchain nightly --profile default || . "$(HOME)/.cargo/env" || true
-	$(shell echo which rustup) && rustup default nightly
-
+	[ -x "$(shell command -v $(RUSTUP))" ] && $(RUSTUP) default nightly
 
 rustup-target-add:## 	rustup-target-add
 ## rustup target add x86_64-unknown-linux-musl
