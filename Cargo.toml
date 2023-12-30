@@ -1,17 +1,17 @@
 [package]
-name = "gitui"
-version = "0.24.3"
-authors = ["extrawurst <mail@rusticorn.com>"]
+name = "gnostr-tui"
+version = "0.0.5"
+authors = ["gnostr <admin@gnostr.org>", "extrawurst <mail@rusticorn.com>"]
 description = "blazing fast terminal-ui for git"
 edition = "2021"
-rust-version = "1.65"
+rust-version = "1.70"
 exclude = [".github/*", ".vscode/*", "assets/*"]
 homepage = "https://github.com/extrawurst/gitui"
 repository = "https://github.com/extrawurst/gitui"
 readme = "README.md"
 license = "MIT"
 categories = ["command-line-utilities"]
-keywords = ["git", "gui", "cli", "terminal", "ui"]
+keywords = ["git", "gui", "cli", "terminal", "ui", "gnostr"]
 
 [dependencies]
 anyhow = "1.0"
@@ -51,7 +51,13 @@ unicode-truncate = "0.2"
 unicode-width = "0.1"
 which = "4.4"
 
+[package.metadata.cargo-udeps.ignore]
+normal = ["cargo-audit"]
+development = ["cargo-audit"]
+#build = []
+
 [dev-dependencies]
+cargo-audit = { version = "0.18.3", features = ["binary-scanning"] }
 pretty_assertions = "1.4"
 tempfile = "3.4"
 
@@ -76,8 +82,8 @@ lto = true
 opt-level = 'z'   # Optimize for size.
 codegen-units = 1
 
-# make debug build as fast as release 
-# usage of utf8 encoding inside tui 
+# make debug build as fast as release
+# usage of utf8 encoding inside tui
 # makes their debug profile slow
 [profile.dev.package."ratatui"]
 opt-level = 3
