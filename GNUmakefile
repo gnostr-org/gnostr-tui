@@ -96,7 +96,7 @@ RUSTC:=$(shell which rustc)
 export RUSTC
 RUSTUP:=$(shell which rustup)
 export RUSTUP
-BREW:=$(shell which brew)
+BREW:=brew#$(shell which brew)
 export BREW
 APT_GET:=$(shell which apt-get)
 export APT_GET
