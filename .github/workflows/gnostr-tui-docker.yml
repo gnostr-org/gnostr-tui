@@ -33,7 +33,7 @@ jobs:
     steps:
       ## notice: this is a pre checkout step
       ## notice: additional operations can be done prior to checkout
-      - run: apt-get update && apt-get install -y bash cmake git python3 && python3 -m ensurepip
+      - run: apt-get update && apt-get install -y bash cmake git
       - run: printenv
       - name: checkout@v3 fetch-depth submodules set-safe-dir true
         uses: actions/checkout@v3
