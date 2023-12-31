@@ -42,6 +42,6 @@ jobs:
           submodules: 'true'
           set-safe-directory: 'true'
       ## notice: these are post checkout steps
-      - run: apt-get update && apt-get -y install autoconf automake build-base openssl-dev libtool make
+      - run: apt-get update && apt-get -y install autoconf automake libssl-dev libtool make pkg-config
       - run: touch ~/GITHUB_TOKEN.txt
       - run: make cargo-b-release
