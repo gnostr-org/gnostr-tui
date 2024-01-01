@@ -128,8 +128,12 @@ fn main() -> Result<()> {
 	asyncgit::register_tracing_logging();
 
 	if !valid_path(&cliargs.repo_path) {
-		bail!("invalid path\nplease run gitui inside of a non-bare git repository");
+		//TODO: gnostr-cli init
+		bail!("invalid path\nplease run gnostr-tui inside of a non-bare git repository");
 	}
+
+	//TODO: prompt to generate nostr privkey
+	//TODO: and add to git config
 
 	let key_config = KeyConfig::init()
 		.map_err(|e| eprintln!("KeyConfig loading error: {e}"))
