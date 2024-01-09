@@ -15,7 +15,9 @@ run-timing:
 debug:
 	RUST_BACKTRACE=true cargo run --features=timing -- ${ARGS}
 
-build-release:
+build-release:cargo-build-release
+cargo-d-release:cargo-build-release
+cargo-build-release:
 	cargo build --release
 
 release-mac: build-release
