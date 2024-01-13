@@ -6,4 +6,9 @@ more:## 	more help
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/	/'
 	#$(MAKE) -f Makefile help
 
+rustup-install:
+## 	rustup target add x86_64-unknown-linux-musl
+	rustup target add x86_64-unknown-linux-musl
+
 -include Makefile
+-include cargo.mk
