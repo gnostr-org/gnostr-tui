@@ -101,12 +101,12 @@ jobs:
           ./release/*.zip
           ./release/*.msi
 
-    - name: Bump homebrew-core formula
-      uses: mislav/bump-homebrew-formula-action@v2
-      if: "matrix.os == 'macos-latest' && !contains(github.ref, '-')" # skip prereleases
-      env:
-        COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
-      with:
-        formula-name: gitui
-        # https://github.com/mislav/bump-homebrew-formula-action/issues/58
-        formula-path: Formula/g/gitui.rb
+#   - name: Bump homebrew-core formula
+#     uses: mislav/bump-homebrew-formula-action@v2
+#     if: "matrix.os == 'macos-latest' && !contains(github.ref, '-')" # skip prereleases
+#     env:
+#       COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
+#     with:
+#       formula-name: gitui
+#       # https://github.com/mislav/bump-homebrew-formula-action/issues/58
+#       formula-path: Formula/g/gitui.rb
