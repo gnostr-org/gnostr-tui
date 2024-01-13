@@ -174,6 +174,10 @@ man:
 	mkdir -p man
 	[ -x "$(shell command -v $(HELP2MAN))" ] && $(HELP2MAN) ./target/release/gnostr-tui > man/gnostr-tui.1 || cat man/gnostr-tui.1
 
+rustup-install:
+## 	rustup target add x86_64-unknown-linux-musl
+	rustup target add x86_64-unknown-linux-musl
+
 -include Makefile
 -include cargo.mk
 -include docker.mk
