@@ -20,19 +20,19 @@ default:
 #-include Makefile
 
 dockerx:docker-buildx## 	docker-buildx
-docker-build:## 	ocker build -f Dockerfile -t gnostr-command .
-	@./gnostr-command-docker -df start
-	@$(DOCKER) pull ghcr.io/gnostr-org/gnostr-command:latest
-	@$(DOCKER) build -f Dockerfile -t gnostr-command .
+docker-build:## 	ocker build -f Dockerfile -t gnostr-tui .
+	@./gnostr-tui-docker -df start
+	@$(DOCKER) pull ghcr.io/gnostr-org/gnostr-tui:latest
+	@$(DOCKER) build -f Dockerfile -t gnostr-tui .
 docker-buildx:## 	docker buildx build sequence
-	@./gnostr-command-docker -df start
+	@./gnostr-tui-docker -df start
 	@$(DOCKER) run --privileged --rm tonistiigi/binfmt --install all
 	@$(DOCKER) buildx ls
-	@$(DOCKER) buildx create --use --name gnostr-command-buildx || true
-	@$(DOCKER) buildx build -t gnostr-command --platform linux/arm64,linux/amd64 .
-	@$(DOCKER) buildx build -t gnostr-command --platform linux/$(TARGET) . --load
+	@$(DOCKER) buildx create --use --name gnostr-tui-buildx || true
+	@$(DOCKER) buildx build -t gnostr-tui --platform linux/arm64,linux/amd64 .
+	@$(DOCKER) buildx build -t gnostr-tui --platform linux/$(TARGET) . --load
 
 docker-package-buildx:
-	@docker build . --tag ghcr.io/gnostr-org/gnostr-command:latest
+	@docker build . --tag ghcr.io/gnostr-org/gnostr-tui:latest
 docker-package-pushx:
-	@$(DOCKER) push ghcr.io/gnostr-org/gnostr-command:latest
+	@$(DOCKER) push ghcr.io/gnostr-org/gnostr-tui:latest
