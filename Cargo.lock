@@ -1789,7 +1789,7 @@ dependencies = [
 
 [[package]]
 name = "gnostr-tui"
-version = "0.0.15"
+version = "0.0.4"
 dependencies = [
  "anyhow",
  "asyncgit",
