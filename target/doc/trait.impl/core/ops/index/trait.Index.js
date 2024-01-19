@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"gnostr_tui":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.75.0/core/ops/index/trait.Index.html\" title=\"trait core::ops::index::Index\">Index</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.75.0/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"gnostr_tui/components/utils/filetree/struct.FileTreeItems.html\" title=\"struct gnostr_tui::components::utils::filetree::FileTreeItems\">FileTreeItems</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

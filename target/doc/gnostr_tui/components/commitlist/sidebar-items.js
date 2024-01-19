@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ELEMENTS_PER_LINE","SLICE_SIZE"],"struct":["CommitList"]};

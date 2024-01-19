@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FileTreeItemKind"],"struct":["FileTreeItem","FileTreeItems","PathCollapsed","TreeItemInfo"]};

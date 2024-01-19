@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SLICE_SIZE"],"struct":["FileRevOpen","FileRevlogComponent"]};
