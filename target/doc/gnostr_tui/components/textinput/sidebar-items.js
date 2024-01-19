@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["InputType"],"fn":["text_append"],"struct":["TextInputComponent"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["compare_details_info_title","details_author","details_committer","details_date","details_files_title","details_info_title","details_message","details_message_title","details_sha","details_tags"]};

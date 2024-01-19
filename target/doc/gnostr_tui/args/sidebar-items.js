@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["app","get_app_cache_path","get_app_config_path","process_cmdline","setup_logging"],"struct":["CliArgs"]};

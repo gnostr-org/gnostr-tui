@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["KEY_LIST_FILENAME","KEY_SYMBOLS_FILENAME"],"struct":["KeyConfig"],"type":["SharedKeyConfig"]};

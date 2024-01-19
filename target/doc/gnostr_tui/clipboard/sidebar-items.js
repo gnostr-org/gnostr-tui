@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["copy_string","exec_copy","exec_copy_with_args"]};
