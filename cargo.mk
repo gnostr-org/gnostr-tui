@@ -6,11 +6,6 @@ cargo-install:### 	cargo install --path .
 ## cargo install --locked --path `pwd`
 	@$(CARGO) install --locked --path $(PWD)
 
-cargo-i-gnostr-legit:cargo-install-gnostr-legit### 	cargo-i-gnostr-legit
-cargo-install-gnostr-legit:
-## cargo install --bins --path ./legit
-	@$(CARGO) install --bins $(QUIET) --path ./legit
-
 cargo-bench:### 	cargo-bench
 ## cargo bench
 	@$(CARGO) bench
