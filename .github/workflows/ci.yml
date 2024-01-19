@@ -84,7 +84,7 @@ jobs:
       run: make test
 
     - name: make-release-linux-musl-${{ matrix.os }} #test-linux-musl
-      if: matrix.os != 'oops'
+      if: matrix.os != 'windows-latest'
       run: |
         make rustup-install rustup-target-add release-linux-musl || rustup target add x86_64-unknown-linux-musl && make release-linux-musl
 
@@ -94,11 +94,9 @@ jobs:
         make clippy || cargo clippy
 
     - name: build-release-${{ matrix.os }}
-      #if: matrix.os != 'windows-latest'
       run: make build-release || cargo b --release
 
     - name: test-install-${{ matrix.os }}
-      #if: matrix.os != 'windows-latest'
       run: cargo install --path "." --force --locked
 
     - name: binary-size-(unix)-${{ matrix.os }}
