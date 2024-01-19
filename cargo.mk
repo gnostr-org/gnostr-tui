@@ -27,7 +27,7 @@ cargo-doc:### 	cargo-doc
 ## cargo doc
 ## cargo doc --no-deps
 ## cargo doc --no-deps --open
-	 $(CARGO) doc #--no-deps #--open
+	 $(CARGO) doc --no-deps #--open
 
 cargo-nightly-udeps:### 	cargo-nightly-udeps
 ## cargo +nightly udeps
