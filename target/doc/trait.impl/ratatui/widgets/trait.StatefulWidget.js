@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"gnostr_tui":[["impl&lt;'a&gt; StatefulWidget for <a class=\"struct\" href=\"gnostr_tui/ui/stateful_paragraph/struct.StatefulParagraph.html\" title=\"struct gnostr_tui::ui::stateful_paragraph::StatefulParagraph\">StatefulParagraph</a>&lt;'a&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

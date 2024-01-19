@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FIRST_LINE_LIMIT"],"enum":["CommitResult","Mode"],"struct":["CommitComponent"]};
