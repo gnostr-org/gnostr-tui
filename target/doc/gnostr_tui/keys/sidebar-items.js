@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["key_config","key_list","symbols"]};

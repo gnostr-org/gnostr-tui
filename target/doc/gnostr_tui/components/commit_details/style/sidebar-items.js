@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Detail"],"fn":["style_detail"]};

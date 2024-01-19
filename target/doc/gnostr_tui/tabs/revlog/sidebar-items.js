@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["LogSearch"],"struct":["LogSearchResult","Revlog"]};

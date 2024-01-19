@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"gnostr_tui":[["impl PatchStatus for <a class=\"struct\" href=\"gnostr_tui/keys/key_list/struct.KeysListPatch.html\" title=\"struct gnostr_tui::keys::key_list::KeysListPatch\">KeysListPatch</a>"],["impl PatchStatus for <a class=\"struct\" href=\"gnostr_tui/ui/style/struct.ThemePatch.html\" title=\"struct gnostr_tui::ui::style::ThemePatch\">ThemePatch</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
