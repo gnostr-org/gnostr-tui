@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["tabs_to_spaces","trim_length_left","trim_offset"]};
