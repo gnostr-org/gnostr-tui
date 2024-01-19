@@ -277,3 +277,4 @@ The key bindings can be customized: See [Key Config](KEY_CONFIG.md) on how to se
 - [GitUp](https://github.com/git-up/GitUp)
   - It would be nice to come up with a way to have the map view available in a terminal tool
 - [git-brunch](https://github.com/andys8/git-brunch)
+
