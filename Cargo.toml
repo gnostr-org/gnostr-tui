@@ -51,7 +51,7 @@ syntect = { version = "5.0", default-features = false, features = ["parsing", "d
 unicode-segmentation = "1.10"
 unicode-truncate = "0.2"
 unicode-width = "0.1"
-which = "4.4"
+which = "6.0"
 
 [package.metadata.cargo-udeps.ignore]
 normal = ["cargo-audit"]
