@@ -76,6 +76,7 @@ jobs:
       - run: python3 -m pip install virtualenv
 
       - run: V=1 make
+      - run: V=1 make rustup-install-stable
       - run: V=1 make cargo-b-release
 
       - name: Save deps
