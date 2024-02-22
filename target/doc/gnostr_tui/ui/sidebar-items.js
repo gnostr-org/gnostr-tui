@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["calc_scroll_top","centered_rect","centered_rect_absolute","common_nav","rect_inside"],"mod":["reflow","scrollbar","scrolllist","stateful_paragraph","style","syntax_text"],"struct":["Size"]};

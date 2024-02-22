@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["get_author_width","number_of_digits"],"static":["MAX_AUTHOR_WIDTH","MIN_AUTHOR_WIDTH","NO_AUTHOR","NO_COMMIT_ID"],"struct":["BlameFileComponent","BlameFileOpen"]};

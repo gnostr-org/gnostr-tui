@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["NBSP"],"struct":["LineTruncator","WordWrapper"],"trait":["LineComposer"]};

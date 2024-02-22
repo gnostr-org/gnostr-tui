@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["AVERAGE","NAV","PRIORITY","RARE_ACTION"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["get_line_offset"],"struct":["ParagraphState","ScrollPos","StatefulParagraph"]};

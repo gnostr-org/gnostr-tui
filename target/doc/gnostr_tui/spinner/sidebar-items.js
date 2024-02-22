@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"static":["SPINNER_CHARS"],"struct":["Spinner"]};

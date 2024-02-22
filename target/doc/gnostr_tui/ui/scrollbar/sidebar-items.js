@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["Orientation"],"fn":["draw_scrollbar"],"struct":["Scrollbar"]};

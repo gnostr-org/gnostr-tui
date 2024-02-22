@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["emojifi_string"],"static":["EMOJI_REPLACER"]};

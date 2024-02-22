@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["InputEvent","InputState"],"static":["FAST_POLL_DURATION","SLOW_POLL_DURATION"],"struct":["Input"]};

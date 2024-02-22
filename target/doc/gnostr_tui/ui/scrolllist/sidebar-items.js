@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["draw_list","draw_list_block"],"struct":["ScrollableList"]};

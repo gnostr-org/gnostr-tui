@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["JobState"],"fn":["syntact_style_to_tui"],"static":["SYNTAX_SET","THEME_SET"],"struct":["AsyncProgressBuffer","AsyncSyntaxJob","SyntaxLine","SyntaxText"]};
