@@ -59,7 +59,7 @@ jobs:
       - uses: actions-rs/toolchain@v1.0.6
         #if: ${{ !env.ACT }}
         with:
-          toolchain: nightly
+          toolchain: stable
           default: true
           override: true
 
@@ -76,6 +76,8 @@ jobs:
       - run: python3 -m pip install virtualenv
 
       - run: V=1 make
+      - run: V=1 make rustup-install-stable
+      - run: rustup default stable
       - run: V=1 make cargo-b-release
 
       - name: Save deps
