@@ -8,40 +8,42 @@ use git2::{ConfigLevel, IntoCString};
 // initialization in libgit2's `git_sysdir_global_init` function.
 #[test]
 fn search_path() -> Result<(), Box<dyn std::error::Error>> {
-    use std::env::join_paths;
+	use std::env::join_paths;
 
-    let path = "fake_path";
-    let original = unsafe { opts::get_search_path(ConfigLevel::Global) };
-    assert_ne!(original, Ok(path.into_c_string()?));
+	let path = "fake_path";
+	let original =
+		unsafe { opts::get_search_path(ConfigLevel::Global) };
+	assert_ne!(original, Ok(path.into_c_string()?));
 
-    // Set
-    unsafe {
-        opts::set_search_path(ConfigLevel::Global, &path)?;
-    }
-    assert_eq!(
-        unsafe { opts::get_search_path(ConfigLevel::Global) },
-        Ok(path.into_c_string()?)
-    );
+	// Set
+	unsafe {
+		opts::set_search_path(ConfigLevel::Global, &path)?;
+	}
+	assert_eq!(
+		unsafe { opts::get_search_path(ConfigLevel::Global) },
+		Ok(path.into_c_string()?)
+	);
 
-    // Append
-    let paths = join_paths(["$PATH", path].iter())?;
-    let expected_paths = join_paths([path, path].iter())?.into_c_string()?;
-    unsafe {
-        opts::set_search_path(ConfigLevel::Global, paths)?;
-    }
-    assert_eq!(
-        unsafe { opts::get_search_path(ConfigLevel::Global) },
-        Ok(expected_paths)
-    );
+	// Append
+	let paths = join_paths(["$PATH", path].iter())?;
+	let expected_paths =
+		join_paths([path, path].iter())?.into_c_string()?;
+	unsafe {
+		opts::set_search_path(ConfigLevel::Global, paths)?;
+	}
+	assert_eq!(
+		unsafe { opts::get_search_path(ConfigLevel::Global) },
+		Ok(expected_paths)
+	);
 
-    // Reset
-    unsafe {
-        opts::reset_search_path(ConfigLevel::Global)?;
-    }
-    assert_eq!(
-        unsafe { opts::get_search_path(ConfigLevel::Global) },
-        original
-    );
+	// Reset
+	unsafe {
+		opts::reset_search_path(ConfigLevel::Global)?;
+	}
+	assert_eq!(
+		unsafe { opts::get_search_path(ConfigLevel::Global) },
+		original
+	);
 
-    Ok(())
+	Ok(())
 }

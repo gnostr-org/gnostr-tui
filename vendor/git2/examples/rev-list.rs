@@ -20,86 +20,93 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Args {
-    #[structopt(name = "topo-order", long)]
-    /// sort commits in topological order
-    flag_topo_order: bool,
-    #[structopt(name = "date-order", long)]
-    /// sort commits in date order
-    flag_date_order: bool,
-    #[structopt(name = "reverse", long)]
-    /// sort commits in reverse
-    flag_reverse: bool,
-    #[structopt(name = "not")]
-    /// don't show <spec>
-    flag_not: Vec<String>,
-    #[structopt(name = "spec", last = true)]
-    arg_spec: Vec<String>,
+	#[structopt(name = "topo-order", long)]
+	/// sort commits in topological order
+	flag_topo_order: bool,
+	#[structopt(name = "date-order", long)]
+	/// sort commits in date order
+	flag_date_order: bool,
+	#[structopt(name = "reverse", long)]
+	/// sort commits in reverse
+	flag_reverse: bool,
+	#[structopt(name = "not")]
+	/// don't show <spec>
+	flag_not: Vec<String>,
+	#[structopt(name = "spec", last = true)]
+	arg_spec: Vec<String>,
 }
 
 fn run(args: &Args) -> Result<(), git2::Error> {
-    let repo = Repository::open(".")?;
-    let mut revwalk = repo.revwalk()?;
+	let repo = Repository::open(".")?;
+	let mut revwalk = repo.revwalk()?;
 
-    let base = if args.flag_reverse {
-        git2::Sort::REVERSE
-    } else {
-        git2::Sort::NONE
-    };
-    revwalk.set_sorting(
-        base | if args.flag_topo_order {
-            git2::Sort::TOPOLOGICAL
-        } else if args.flag_date_order {
-            git2::Sort::TIME
-        } else {
-            git2::Sort::NONE
-        },
-    )?;
+	let base = if args.flag_reverse {
+		git2::Sort::REVERSE
+	} else {
+		git2::Sort::NONE
+	};
+	revwalk.set_sorting(
+		base | if args.flag_topo_order {
+			git2::Sort::TOPOLOGICAL
+		} else if args.flag_date_order {
+			git2::Sort::TIME
+		} else {
+			git2::Sort::NONE
+		},
+	)?;
 
-    let specs = args
-        .flag_not
-        .iter()
-        .map(|s| (s, true))
-        .chain(args.arg_spec.iter().map(|s| (s, false)))
-        .map(|(spec, hide)| {
-            if spec.starts_with('^') {
-                (&spec[1..], !hide)
-            } else {
-                (&spec[..], hide)
-            }
-        });
-    for (spec, hide) in specs {
-        let id = if spec.contains("..") {
-            let revspec = repo.revparse(spec)?;
-            if revspec.mode().contains(git2::RevparseMode::MERGE_BASE) {
-                return Err(Error::from_str("merge bases not implemented"));
-            }
-            push(&mut revwalk, revspec.from().unwrap().id(), !hide)?;
-            revspec.to().unwrap().id()
-        } else {
-            repo.revparse_single(spec)?.id()
-        };
-        push(&mut revwalk, id, hide)?;
-    }
+	let specs = args
+		.flag_not
+		.iter()
+		.map(|s| (s, true))
+		.chain(args.arg_spec.iter().map(|s| (s, false)))
+		.map(|(spec, hide)| {
+			if spec.starts_with('^') {
+				(&spec[1..], !hide)
+			} else {
+				(&spec[..], hide)
+			}
+		});
+	for (spec, hide) in specs {
+		let id = if spec.contains("..") {
+			let revspec = repo.revparse(spec)?;
+			if revspec.mode().contains(git2::RevparseMode::MERGE_BASE)
+			{
+				return Err(Error::from_str(
+					"merge bases not implemented",
+				));
+			}
+			push(&mut revwalk, revspec.from().unwrap().id(), !hide)?;
+			revspec.to().unwrap().id()
+		} else {
+			repo.revparse_single(spec)?.id()
+		};
+		push(&mut revwalk, id, hide)?;
+	}
 
-    for id in revwalk {
-        let id = id?;
-        println!("{}", id);
-    }
-    Ok(())
+	for id in revwalk {
+		let id = id?;
+		println!("{}", id);
+	}
+	Ok(())
 }
 
-fn push(revwalk: &mut Revwalk, id: Oid, hide: bool) -> Result<(), Error> {
-    if hide {
-        revwalk.hide(id)
-    } else {
-        revwalk.push(id)
-    }
+fn push(
+	revwalk: &mut Revwalk,
+	id: Oid,
+	hide: bool,
+) -> Result<(), Error> {
+	if hide {
+		revwalk.hide(id)
+	} else {
+		revwalk.push(id)
+	}
 }
 
 fn main() {
-    let args = Args::from_args();
-    match run(&args) {
-        Ok(()) => {}
-        Err(e) => println!("error: {}", e),
-    }
+	let args = Args::from_args();
+	match run(&args) {
+		Ok(()) => {}
+		Err(e) => println!("error: {}", e),
+	}
 }

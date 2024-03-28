@@ -19,33 +19,34 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Args {
-    #[structopt(name = "remote")]
-    arg_remote: String,
+	#[structopt(name = "remote")]
+	arg_remote: String,
 }
 
 fn run(args: &Args) -> Result<(), git2::Error> {
-    let repo = Repository::open(".")?;
-    let remote = &args.arg_remote;
-    let mut remote = repo
-        .find_remote(remote)
-        .or_else(|_| repo.remote_anonymous(remote))?;
+	let repo = Repository::open(".")?;
+	let remote = &args.arg_remote;
+	let mut remote = repo
+		.find_remote(remote)
+		.or_else(|_| repo.remote_anonymous(remote))?;
 
-    // Connect to the remote and call the printing function for each of the
-    // remote references.
-    let connection = remote.connect_auth(Direction::Fetch, None, None)?;
+	// Connect to the remote and call the printing function for each of the
+	// remote references.
+	let connection =
+		remote.connect_auth(Direction::Fetch, None, None)?;
 
-    // Get the list of references on the remote and print out their name next to
-    // what they point to.
-    for head in connection.list()?.iter() {
-        println!("{}\t{}", head.oid(), head.name());
-    }
-    Ok(())
+	// Get the list of references on the remote and print out their name next to
+	// what they point to.
+	for head in connection.list()?.iter() {
+		println!("{}\t{}", head.oid(), head.name());
+	}
+	Ok(())
 }
 
 fn main() {
-    let args = Args::from_args();
-    match run(&args) {
-        Ok(()) => {}
-        Err(e) => println!("error: {}", e),
-    }
+	let args = Args::from_args();
+	match run(&args) {
+		Ok(()) => {}
+		Err(e) => println!("error: {}", e),
+	}
 }
