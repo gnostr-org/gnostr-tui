@@ -19,42 +19,45 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Args {
-    #[structopt(name = "spec")]
-    arg_spec: String,
-    #[structopt(name = "dir", long = "git-dir")]
-    /// directory of the git repository to check
-    flag_git_dir: Option<String>,
+	#[structopt(name = "spec")]
+	arg_spec: String,
+	#[structopt(name = "dir", long = "git-dir")]
+	/// directory of the git repository to check
+	flag_git_dir: Option<String>,
 }
 
 fn run(args: &Args) -> Result<(), git2::Error> {
-    let path = args.flag_git_dir.as_ref().map(|s| &s[..]).unwrap_or(".");
-    let repo = Repository::open(path)?;
+	let path =
+		args.flag_git_dir.as_ref().map(|s| &s[..]).unwrap_or(".");
+	let repo = Repository::open(path)?;
 
-    let revspec = repo.revparse(&args.arg_spec)?;
+	let revspec = repo.revparse(&args.arg_spec)?;
 
-    if revspec.mode().contains(git2::RevparseMode::SINGLE) {
-        println!("{}", revspec.from().unwrap().id());
-    } else if revspec.mode().contains(git2::RevparseMode::RANGE) {
-        let to = revspec.to().unwrap();
-        let from = revspec.from().unwrap();
-        println!("{}", to.id());
+	if revspec.mode().contains(git2::RevparseMode::SINGLE) {
+		println!("{}", revspec.from().unwrap().id());
+	} else if revspec.mode().contains(git2::RevparseMode::RANGE) {
+		let to = revspec.to().unwrap();
+		let from = revspec.from().unwrap();
+		println!("{}", to.id());
 
-        if revspec.mode().contains(git2::RevparseMode::MERGE_BASE) {
-            let base = repo.merge_base(from.id(), to.id())?;
-            println!("{}", base);
-        }
+		if revspec.mode().contains(git2::RevparseMode::MERGE_BASE) {
+			let base = repo.merge_base(from.id(), to.id())?;
+			println!("{}", base);
+		}
 
-        println!("^{}", from.id());
-    } else {
-        return Err(git2::Error::from_str("invalid results from revparse"));
-    }
-    Ok(())
+		println!("^{}", from.id());
+	} else {
+		return Err(git2::Error::from_str(
+			"invalid results from revparse",
+		));
+	}
+	Ok(())
 }
 
 fn main() {
-    let args = Args::from_args();
-    match run(&args) {
-        Ok(()) => {}
-        Err(e) => println!("error: {}", e),
-    }
+	let args = Args::from_args();
+	match run(&args) {
+		Ok(()) => {}
+		Err(e) => println!("error: {}", e),
+	}
 }

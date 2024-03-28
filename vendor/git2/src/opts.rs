@@ -20,17 +20,20 @@ use crate::{raw, Buf, ConfigLevel, Error, IntoCString};
 /// This function is unsafe as it mutates the global state but cannot guarantee
 /// thread-safety. It needs to be externally synchronized with calls to access
 /// the global state.
-pub unsafe fn set_search_path<P>(level: ConfigLevel, path: P) -> Result<(), Error>
+pub unsafe fn set_search_path<P>(
+	level: ConfigLevel,
+	path: P,
+) -> Result<(), Error>
 where
-    P: IntoCString,
+	P: IntoCString,
 {
-    crate::init();
-    try_call!(raw::git_libgit2_opts(
-        raw::GIT_OPT_SET_SEARCH_PATH as libc::c_int,
-        level as libc::c_int,
-        path.into_c_string()?.as_ptr()
-    ));
-    Ok(())
+	crate::init();
+	try_call!(raw::git_libgit2_opts(
+		raw::GIT_OPT_SET_SEARCH_PATH as libc::c_int,
+		level as libc::c_int,
+		path.into_c_string()?.as_ptr()
+	));
+	Ok(())
 }
 
 /// Reset the search path for a given level of config data to the default
@@ -42,14 +45,16 @@ where
 /// This function is unsafe as it mutates the global state but cannot guarantee
 /// thread-safety. It needs to be externally synchronized with calls to access
 /// the global state.
-pub unsafe fn reset_search_path(level: ConfigLevel) -> Result<(), Error> {
-    crate::init();
-    try_call!(raw::git_libgit2_opts(
-        raw::GIT_OPT_SET_SEARCH_PATH as libc::c_int,
-        level as libc::c_int,
-        core::ptr::null::<u8>()
-    ));
-    Ok(())
+pub unsafe fn reset_search_path(
+	level: ConfigLevel,
+) -> Result<(), Error> {
+	crate::init();
+	try_call!(raw::git_libgit2_opts(
+		raw::GIT_OPT_SET_SEARCH_PATH as libc::c_int,
+		level as libc::c_int,
+		core::ptr::null::<u8>()
+	));
+	Ok(())
 }
 
 /// Get the search path for a given level of config data.
@@ -60,15 +65,17 @@ pub unsafe fn reset_search_path(level: ConfigLevel) -> Result<(), Error> {
 /// This function is unsafe as it mutates the global state but cannot guarantee
 /// thread-safety. It needs to be externally synchronized with calls to access
 /// the global state.
-pub unsafe fn get_search_path(level: ConfigLevel) -> Result<CString, Error> {
-    crate::init();
-    let buf = Buf::new();
-    try_call!(raw::git_libgit2_opts(
-        raw::GIT_OPT_GET_SEARCH_PATH as libc::c_int,
-        level as libc::c_int,
-        buf.raw() as *const _
-    ));
-    buf.into_c_string()
+pub unsafe fn get_search_path(
+	level: ConfigLevel,
+) -> Result<CString, Error> {
+	crate::init();
+	let buf = Buf::new();
+	try_call!(raw::git_libgit2_opts(
+		raw::GIT_OPT_GET_SEARCH_PATH as libc::c_int,
+		level as libc::c_int,
+		buf.raw() as *const _
+	));
+	buf.into_c_string()
 }
 
 /// Controls whether or not libgit2 will cache loaded objects.  Enabled by
@@ -77,16 +84,16 @@ pub unsafe fn get_search_path(level: ConfigLevel) -> Result<CString, Error> {
 /// Disabling this will cause repository objects to clear their caches when next
 /// accessed.
 pub fn enable_caching(enabled: bool) {
-    crate::init();
-    let error = unsafe {
-        raw::git_libgit2_opts(
-            raw::GIT_OPT_ENABLE_CACHING as libc::c_int,
-            enabled as libc::c_int,
-        )
-    };
-    // This function cannot actually fail, but the function has an error return
-    // for other options that can.
-    debug_assert!(error >= 0);
+	crate::init();
+	let error = unsafe {
+		raw::git_libgit2_opts(
+			raw::GIT_OPT_ENABLE_CACHING as libc::c_int,
+			enabled as libc::c_int,
+		)
+	};
+	// This function cannot actually fail, but the function has an error return
+	// for other options that can.
+	debug_assert!(error >= 0);
 }
 
 /// Controls whether or not libgit2 will verify when writing an object that all
@@ -95,16 +102,16 @@ pub fn enable_caching(enabled: bool) {
 /// creation of objects that reference invalid objects (due to programming
 /// error or repository corruption).
 pub fn strict_object_creation(enabled: bool) {
-    crate::init();
-    let error = unsafe {
-        raw::git_libgit2_opts(
-            raw::GIT_OPT_ENABLE_STRICT_OBJECT_CREATION as libc::c_int,
-            enabled as libc::c_int,
-        )
-    };
-    // This function cannot actually fail, but the function has an error return
-    // for other options that can.
-    debug_assert!(error >= 0);
+	crate::init();
+	let error = unsafe {
+		raw::git_libgit2_opts(
+			raw::GIT_OPT_ENABLE_STRICT_OBJECT_CREATION as libc::c_int,
+			enabled as libc::c_int,
+		)
+	};
+	// This function cannot actually fail, but the function has an error return
+	// for other options that can.
+	debug_assert!(error >= 0);
 }
 
 /// Controls whether or not libgit2 will verify that objects loaded have the
@@ -112,16 +119,17 @@ pub fn strict_object_creation(enabled: bool) {
 /// improve performance, at the cost of relying on repository integrity
 /// without checking it.
 pub fn strict_hash_verification(enabled: bool) {
-    crate::init();
-    let error = unsafe {
-        raw::git_libgit2_opts(
-            raw::GIT_OPT_ENABLE_STRICT_HASH_VERIFICATION as libc::c_int,
-            enabled as libc::c_int,
-        )
-    };
-    // This function cannot actually fail, but the function has an error return
-    // for other options that can.
-    debug_assert!(error >= 0);
+	crate::init();
+	let error = unsafe {
+		raw::git_libgit2_opts(
+			raw::GIT_OPT_ENABLE_STRICT_HASH_VERIFICATION
+				as libc::c_int,
+			enabled as libc::c_int,
+		)
+	};
+	// This function cannot actually fail, but the function has an error return
+	// for other options that can.
+	debug_assert!(error >= 0);
 }
 
 /// Returns the list of git extensions that are supported. This is the list of
@@ -134,19 +142,19 @@ pub fn strict_hash_verification(enabled: bool) {
 /// libgit2 stores user extensions in a static variable.
 /// This function is effectively reading a `static mut` and should be treated as such
 pub unsafe fn get_extensions() -> Result<StringArray, Error> {
-    crate::init();
+	crate::init();
 
-    let mut extensions = raw::git_strarray {
-        strings: ptr::null_mut(),
-        count: 0,
-    };
+	let mut extensions = raw::git_strarray {
+		strings: ptr::null_mut(),
+		count: 0,
+	};
 
-    try_call!(raw::git_libgit2_opts(
-        raw::GIT_OPT_GET_EXTENSIONS as libc::c_int,
-        &mut extensions
-    ));
+	try_call!(raw::git_libgit2_opts(
+		raw::GIT_OPT_GET_EXTENSIONS as libc::c_int,
+		&mut extensions
+	));
 
-    Ok(StringArray::from_raw(extensions))
+	Ok(StringArray::from_raw(extensions))
 }
 
 /// Set that the given git extensions are supported by the caller. Extensions
@@ -161,46 +169,49 @@ pub unsafe fn get_extensions() -> Result<StringArray, Error> {
 /// This function is effectively modifying a `static mut` and should be treated as such
 pub unsafe fn set_extensions<E>(extensions: &[E]) -> Result<(), Error>
 where
-    for<'x> &'x E: IntoCString,
+	for<'x> &'x E: IntoCString,
 {
-    crate::init();
+	crate::init();
 
-    let extensions = extensions
-        .iter()
-        .map(|e| e.into_c_string())
-        .collect::<Result<Vec<_>, _>>()?;
+	let extensions = extensions
+		.iter()
+		.map(|e| e.into_c_string())
+		.collect::<Result<Vec<_>, _>>()?;
 
-    let extension_ptrs = extensions.iter().map(|e| e.as_ptr()).collect::<Vec<_>>();
+	let extension_ptrs =
+		extensions.iter().map(|e| e.as_ptr()).collect::<Vec<_>>();
 
-    try_call!(raw::git_libgit2_opts(
-        raw::GIT_OPT_SET_EXTENSIONS as libc::c_int,
-        extension_ptrs.as_ptr(),
-        extension_ptrs.len() as libc::size_t
-    ));
+	try_call!(raw::git_libgit2_opts(
+		raw::GIT_OPT_SET_EXTENSIONS as libc::c_int,
+		extension_ptrs.as_ptr(),
+		extension_ptrs.len() as libc::size_t
+	));
 
-    Ok(())
+	Ok(())
 }
 
 /// Set whether or not to verify ownership before performing a repository.
 /// Enabled by default, but disabling this can lead to code execution vulnerabilities.
-pub unsafe fn set_verify_owner_validation(enabled: bool) -> Result<(), Error> {
-    crate::init();
-    let error = raw::git_libgit2_opts(
-        raw::GIT_OPT_SET_OWNER_VALIDATION as libc::c_int,
-        enabled as libc::c_int,
-    );
-    // This function cannot actually fail, but the function has an error return
-    // for other options that can.
-    debug_assert!(error >= 0);
-    Ok(())
+pub unsafe fn set_verify_owner_validation(
+	enabled: bool,
+) -> Result<(), Error> {
+	crate::init();
+	let error = raw::git_libgit2_opts(
+		raw::GIT_OPT_SET_OWNER_VALIDATION as libc::c_int,
+		enabled as libc::c_int,
+	);
+	// This function cannot actually fail, but the function has an error return
+	// for other options that can.
+	debug_assert!(error >= 0);
+	Ok(())
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
+	use super::*;
 
-    #[test]
-    fn smoke() {
-        strict_hash_verification(false);
-    }
+	#[test]
+	fn smoke() {
+		strict_hash_verification(false);
+	}
 }

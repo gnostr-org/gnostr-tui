@@ -22,83 +22,87 @@ use structopt::StructOpt;
 #[derive(StructOpt)]
 #[allow(non_snake_case)]
 struct Args {
-    #[structopt(name = "path")]
-    arg_path: String,
-    #[structopt(name = "spec")]
-    arg_spec: Option<String>,
-    #[structopt(short = "M")]
-    /// find line moves within and across files
-    flag_M: bool,
-    #[structopt(short = "C")]
-    /// find line copies within and across files
-    flag_C: bool,
-    #[structopt(short = "F")]
-    /// follow only the first parent commits
-    flag_F: bool,
+	#[structopt(name = "path")]
+	arg_path: String,
+	#[structopt(name = "spec")]
+	arg_spec: Option<String>,
+	#[structopt(short = "M")]
+	/// find line moves within and across files
+	flag_M: bool,
+	#[structopt(short = "C")]
+	/// find line copies within and across files
+	flag_C: bool,
+	#[structopt(short = "F")]
+	/// follow only the first parent commits
+	flag_F: bool,
 }
 
 fn run(args: &Args) -> Result<(), git2::Error> {
-    let repo = Repository::open(".")?;
-    let path = Path::new(&args.arg_path[..]);
+	let repo = Repository::open(".")?;
+	let path = Path::new(&args.arg_path[..]);
 
-    // Prepare our blame options
-    let mut opts = BlameOptions::new();
-    opts.track_copies_same_commit_moves(args.flag_M)
-        .track_copies_same_commit_copies(args.flag_C)
-        .first_parent(args.flag_F);
+	// Prepare our blame options
+	let mut opts = BlameOptions::new();
+	opts.track_copies_same_commit_moves(args.flag_M)
+		.track_copies_same_commit_copies(args.flag_C)
+		.first_parent(args.flag_F);
 
-    let mut commit_id = "HEAD".to_string();
+	let mut commit_id = "HEAD".to_string();
 
-    // Parse spec
-    if let Some(spec) = args.arg_spec.as_ref() {
-        let revspec = repo.revparse(spec)?;
+	// Parse spec
+	if let Some(spec) = args.arg_spec.as_ref() {
+		let revspec = repo.revparse(spec)?;
 
-        let (oldest, newest) = if revspec.mode().contains(git2::RevparseMode::SINGLE) {
-            (None, revspec.from())
-        } else if revspec.mode().contains(git2::RevparseMode::RANGE) {
-            (revspec.from(), revspec.to())
-        } else {
-            (None, None)
-        };
+		let (oldest, newest) = if revspec
+			.mode()
+			.contains(git2::RevparseMode::SINGLE)
+		{
+			(None, revspec.from())
+		} else if revspec.mode().contains(git2::RevparseMode::RANGE) {
+			(revspec.from(), revspec.to())
+		} else {
+			(None, None)
+		};
 
-        if let Some(commit) = oldest {
-            opts.oldest_commit(commit.id());
-        }
+		if let Some(commit) = oldest {
+			opts.oldest_commit(commit.id());
+		}
 
-        if let Some(commit) = newest {
-            opts.newest_commit(commit.id());
-            if !commit.id().is_zero() {
-                commit_id = format!("{}", commit.id())
-            }
-        }
-    }
+		if let Some(commit) = newest {
+			opts.newest_commit(commit.id());
+			if !commit.id().is_zero() {
+				commit_id = format!("{}", commit.id())
+			}
+		}
+	}
 
-    let spec = format!("{}:{}", commit_id, path.display());
-    let blame = repo.blame_file(path, Some(&mut opts))?;
-    let object = repo.revparse_single(&spec[..])?;
-    let blob = repo.find_blob(object.id())?;
-    let reader = BufReader::new(blob.content());
+	let spec = format!("{}:{}", commit_id, path.display());
+	let blame = repo.blame_file(path, Some(&mut opts))?;
+	let object = repo.revparse_single(&spec[..])?;
+	let blob = repo.find_blob(object.id())?;
+	let reader = BufReader::new(blob.content());
 
-    for (i, line) in reader.lines().enumerate() {
-        if let (Ok(line), Some(hunk)) = (line, blame.get_line(i + 1)) {
-            let sig = hunk.final_signature();
-            println!(
-                "{} {} <{}> {}",
-                hunk.final_commit_id(),
-                String::from_utf8_lossy(sig.name_bytes()),
-                String::from_utf8_lossy(sig.email_bytes()),
-                line
-            );
-        }
-    }
+	for (i, line) in reader.lines().enumerate() {
+		if let (Ok(line), Some(hunk)) = (line, blame.get_line(i + 1))
+		{
+			let sig = hunk.final_signature();
+			println!(
+				"{} {} <{}> {}",
+				hunk.final_commit_id(),
+				String::from_utf8_lossy(sig.name_bytes()),
+				String::from_utf8_lossy(sig.email_bytes()),
+				line
+			);
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 fn main() {
-    let args = Args::from_args();
-    match run(&args) {
-        Ok(()) => {}
-        Err(e) => println!("error: {}", e),
-    }
+	let args = Args::from_args();
+	match run(&args) {
+		Ok(()) => {}
+		Err(e) => println!("error: {}", e),
+	}
 }
