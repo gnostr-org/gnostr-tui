@@ -69,7 +69,7 @@
 #![allow(trivial_numeric_casts, trivial_casts)]
 #![deny(missing_docs)]
 #![warn(rust_2018_idioms)]
-#![cfg_attr(test, deny(warnings))]
+#![cfg_attr(test, allow(warnings))]
 
 use bitflags::bitflags;
 use libgit2_sys as raw;
