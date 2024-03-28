@@ -2,7 +2,7 @@
 
 #![forbid(missing_docs)]
 #![deny(
-	unused_imports,
+	//unused_imports,
 	unused_must_use,
 	dead_code,
 	unstable_name_collisions,
