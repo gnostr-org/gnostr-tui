@@ -153,6 +153,8 @@ rustup-target-add:## 	rustup-target-add
 cargo-b:## 	cargo-b
 	[ -x "$(shell command -v $(RUSTUP))" ] || $(MAKE) rustup-install-stable
 	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) build
+cargo-br:cargo-build-release
+cargo-build-release:cargo-b-release
 cargo-b-release:## 	cargo-b-release
 	[ -x "$(shell command -v $(RUSTUP))" ] || $(MAKE) rustup-install-stable
 	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) build --release
