@@ -25,7 +25,7 @@ use crate::{
 	},
 	setup_popups,
 	strings::{self, ellipsis_trim_start, order},
-	tabs::{FilesTab, Revlog, StashList, Stashing, Status},
+	tabs::{FilesTab, Revlog, StashList, Stashing, Status,Welcome},
 	try_or_popup,
 	ui::style::{SharedTheme, Theme},
 	AsyncAppNotification, AsyncNotification,
@@ -47,7 +47,7 @@ use ratatui::{
 		Alignment, Constraint, Direction, Layout, Margin, Rect,
 	},
 	text::{Line, Span},
-	widgets::{Block, Borders, Paragraph, Tabs},
+	widgets::{Block, Borders, Paragraph, Tabs}, //Tabs
 	Frame,
 };
 use std::{
@@ -77,7 +77,9 @@ pub struct App {
 	stashmsg_popup: StashMsgComponent,
 	inspect_commit_popup: InspectCommitComponent,
 	compare_commits_popup: CompareCommitsComponent,
+
 	external_editor_popup: ExternalEditorComponent,
+
 	revision_files_popup: RevisionFilesPopup,
 	fuzzy_find_popup: FuzzyFindPopup,
 	log_search_popup: LogSearchPopupComponent,
@@ -93,20 +95,33 @@ pub struct App {
 	submodule_popup: SubmodulesListComponent,
 	tags_popup: TagListComponent,
 	reset_popup: ResetPopupComponent,
-	cmdbar: RefCell<CommandBar>,
-	tab: usize,
+
+	cmdbar: RefCell<CommandBar>, //cmdbar
+
+    //Tabs
+
+	tab: usize, //tab
+
 	revlog: Revlog,
+
+	welcome_tab: Welcome,
+
 	status_tab: Status,
+
 	stashing_tab: Stashing,
+
 	stashlist_tab: StashList,
+
 	files_tab: FilesTab,
+
 	queue: Queue,
 	theme: SharedTheme,
 	key_config: SharedKeyConfig,
 	input: Input,
 	popup_stack: PopupStack,
 	options: SharedOptions,
-	repo_path_text: String,
+
+	repo_path_text: String, //gnostr-chat topic
 
 	// "Flags"
 	requires_redraw: Cell<bool>,
@@ -135,7 +150,7 @@ impl App {
 		let key_config = Rc::new(key_config);
 		let options = Options::new(repo.clone());
 
-		let tab = options.borrow().current_tab();
+		let tab = options.borrow().current_tab(); //tab
 
 		let mut app = Self {
 			input,
@@ -306,6 +321,16 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
+            //welcome
+			welcome_tab: Welcome::new(
+				repo.clone(),
+				&queue,
+				sender,
+				theme.clone(),
+				key_config.clone(),
+				options.clone(),
+			),
+            //status
 			status_tab: Status::new(
 				repo.clone(),
 				&queue,
@@ -314,6 +339,7 @@ impl App {
 				key_config.clone(),
 				options.clone(),
 			),
+            //tab
 			stashing_tab: Stashing::new(
 				&repo,
 				sender,
@@ -321,12 +347,14 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
+            //tab 
 			stashlist_tab: StashList::new(
 				repo.clone(),
 				&queue,
 				theme.clone(),
 				key_config.clone(),
 			),
+            //tab
 			files_tab: FilesTab::new(
 				repo.clone(),
 				sender_app,
@@ -335,7 +363,8 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
-			tab: 0,
+            //tab
+			tab: 3,
 			queue,
 			theme,
 			options,
@@ -429,6 +458,9 @@ impl App {
 					self.toggle_tabs(true)?;
 					NeedsUpdate::COMMANDS
 				} else if key_match(
+					k,
+					self.key_config.keys.tab_welcome,
+				) || key_match(
 					k,
 					self.key_config.keys.tab_status,
 				) || key_match(
@@ -680,8 +712,13 @@ impl App {
 		false
 	}
 
+    //
 	fn get_tabs(&mut self) -> Vec<&mut dyn Component> {
 		vec![
+
+            //welcome dashboard
+            //&mut self.welcome_tab,
+
 			&mut self.status_tab,
 			&mut self.revlog,
 			&mut self.files_tab,
@@ -703,6 +740,10 @@ impl App {
 
 	fn switch_tab(&mut self, k: &KeyEvent) -> Result<()> {
 		if key_match(k, self.key_config.keys.tab_status) {
+			self.switch_to_tab(&AppTabs::Welcome)?;
+        } else if key_match(k, self.key_config.keys.tab_welcome) {
+			self.switch_to_tab(&AppTabs::Welcome)?;
+		} else if key_match(k, self.key_config.keys.tab_status) {
 			self.switch_to_tab(&AppTabs::Status)?;
 		} else if key_match(k, self.key_config.keys.tab_log) {
 			self.switch_to_tab(&AppTabs::Log)?;
@@ -735,11 +776,12 @@ impl App {
 
 	fn switch_to_tab(&mut self, tab: &AppTabs) -> Result<()> {
 		match tab {
-			AppTabs::Status => self.set_tab(0)?,
-			AppTabs::Log => self.set_tab(1)?,
-			AppTabs::Files => self.set_tab(2)?,
-			AppTabs::Stashing => self.set_tab(3)?,
-			AppTabs::Stashlist => self.set_tab(4)?,
+			AppTabs::Welcome => self.set_tab(0)?,
+			AppTabs::Status => self.set_tab(1)?, //1
+			AppTabs::Log => self.set_tab(2)?, //2
+			AppTabs::Files => self.set_tab(3)?, //3
+			AppTabs::Stashing => self.set_tab(4)?, //4
+			AppTabs::Stashlist => self.set_tab(5)?, //5
 		}
 		Ok(())
 	}
@@ -871,7 +913,7 @@ impl App {
 			InternalEvent::Tags => {
 				self.tags_popup.open()?;
 			}
-			InternalEvent::TabSwitchStatus => self.set_tab(0)?,
+			InternalEvent::TabSwitchStatus => self.set_tab(1)?,
 			InternalEvent::TabSwitch(tab) => {
 				self.switch_to_tab(&tab)?;
 				flags.insert(NeedsUpdate::ALL);
@@ -1196,6 +1238,9 @@ impl App {
 	}
 
 	//TODO: make this dynamic
+	//TODO: make this dynamic
+	//TODO: make this dynamic
+	//TODO: make this dynamic
 	fn draw_top_bar<B: Backend>(&self, f: &mut Frame<B>, r: Rect) {
 		const DIVIDER_PAD_SPACES: usize = 2;
 		const SIDE_PADS: usize = 2;
@@ -1207,6 +1252,7 @@ impl App {
 		});
 
 		let tab_labels = [
+			Span::raw(strings::tab_welcome(&self.key_config)),
 			Span::raw(strings::tab_status(&self.key_config)),
 			Span::raw(strings::tab_log(&self.key_config)),
 			Span::raw(strings::tab_files(&self.key_config)),
