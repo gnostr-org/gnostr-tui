@@ -25,7 +25,7 @@ use crate::{
 	},
 	setup_popups,
 	strings::{self, ellipsis_trim_start, order},
-	tabs::{FilesTab, Revlog, StashList, Stashing, Status,Welcome},
+	tabs::{FilesTab, Revlog, StashList, Stashing, Status, Welcome},
 	try_or_popup,
 	ui::style::{SharedTheme, Theme},
 	AsyncAppNotification, AsyncNotification,
@@ -415,11 +415,12 @@ impl App {
 		if !fullscreen_popup_open {
 			//TODO: macro because of generic draw call
 			match self.tab {
-				0 => self.status_tab.draw(f, chunks_main[1])?,
-				1 => self.revlog.draw(f, chunks_main[1])?,
-				2 => self.files_tab.draw(f, chunks_main[1])?,
-				3 => self.stashing_tab.draw(f, chunks_main[1])?,
-				4 => self.stashlist_tab.draw(f, chunks_main[1])?,
+				0 => self.welcome_tab.draw(f, chunks_main[1])?,
+				1 => self.status_tab.draw(f, chunks_main[1])?,
+				2 => self.revlog.draw(f, chunks_main[1])?,
+				3 => self.files_tab.draw(f, chunks_main[1])?,
+				4 => self.stashing_tab.draw(f, chunks_main[1])?,
+				5 => self.stashlist_tab.draw(f, chunks_main[1])?,
 				_ => bail!("unknown tab"),
 			};
 		}
@@ -511,6 +512,10 @@ impl App {
 						let changes =
 							self.status_tab.get_files_changes()?;
 						self.commit.show_editor(changes)
+					//} else {
+					//	let changes =
+					//		self.welcome_tab.get_files_changes()?;
+					//	self.commit.show_editor(changes)
 					};
 
 				if let Err(e) = result {
@@ -534,6 +539,7 @@ impl App {
 		log::trace!("update");
 
 		self.commit.update();
+		self.welcome_tab.update()?;
 		self.status_tab.update()?;
 		self.revlog.update()?;
 		self.files_tab.update()?;
@@ -554,6 +560,7 @@ impl App {
 		log::trace!("update_async: {:?}", ev);
 
 		if let AsyncNotification::Git(ev) = ev {
+			self.welcome_tab.update_git(ev)?;
 			self.status_tab.update_git(ev)?;
 			self.stashing_tab.update_git(ev)?;
 			self.revlog.update_git(ev)?;
@@ -592,7 +599,8 @@ impl App {
 
 	///
 	pub fn any_work_pending(&self) -> bool {
-		self.status_tab.anything_pending()
+		self.welcome_tab.anything_pending()
+		    || self.status_tab.anything_pending()
 			|| self.revlog.any_work_pending()
 			|| self.stashing_tab.anything_pending()
 			|| self.files_tab.anything_pending()
@@ -651,6 +659,7 @@ impl App {
 			options_popup,
 			help,
 			revlog,
+			welcome_tab,
 			status_tab,
 			files_tab,
 			stashing_tab,
@@ -717,7 +726,7 @@ impl App {
 		vec![
 
             //welcome dashboard
-            //&mut self.welcome_tab,
+            &mut self.welcome_tab,
 
 			&mut self.status_tab,
 			&mut self.revlog,
@@ -739,9 +748,7 @@ impl App {
 	}
 
 	fn switch_tab(&mut self, k: &KeyEvent) -> Result<()> {
-		if key_match(k, self.key_config.keys.tab_status) {
-			self.switch_to_tab(&AppTabs::Welcome)?;
-        } else if key_match(k, self.key_config.keys.tab_welcome) {
+		if key_match(k, self.key_config.keys.tab_welcome) {
 			self.switch_to_tab(&AppTabs::Welcome)?;
 		} else if key_match(k, self.key_config.keys.tab_status) {
 			self.switch_to_tab(&AppTabs::Status)?;
@@ -804,6 +811,7 @@ impl App {
 		//TODO: make this a queue event?
 		//NOTE: set when any tree component changed selection
 		if flags.contains(NeedsUpdate::DIFF) {
+			self.welcome_tab.update_diff()?;
 			self.status_tab.update_diff()?;
 			self.inspect_commit_popup.update_diff()?;
 			self.compare_commits_popup.update_diff()?;
@@ -913,7 +921,7 @@ impl App {
 			InternalEvent::Tags => {
 				self.tags_popup.open()?;
 			}
-			InternalEvent::TabSwitchStatus => self.set_tab(1)?,
+			InternalEvent::TabSwitchStatus => self.set_tab(0)?,
 			InternalEvent::TabSwitch(tab) => {
 				self.switch_to_tab(&tab)?;
 				flags.insert(NeedsUpdate::ALL);
@@ -960,6 +968,7 @@ impl App {
 				flags.insert(NeedsUpdate::ALL);
 			}
 			InternalEvent::StatusLastFileMoved => {
+				self.welcome_tab.last_file_moved()?;
 				self.status_tab.last_file_moved()?;
 			}
 			InternalEvent::OpenFuzzyFinder(contents, target) => {
@@ -975,11 +984,13 @@ impl App {
 			InternalEvent::OptionSwitched(o) => {
 				match o {
 					AppOption::StatusShowUntracked => {
+						self.welcome_tab.update()?;
 						self.status_tab.update()?;
 					}
 					AppOption::DiffContextLines
 					| AppOption::DiffIgnoreWhitespaces
 					| AppOption::DiffInterhunkLines => {
+						self.welcome_tab.update_diff()?;
 						self.status_tab.update_diff()?;
 					}
 				}
@@ -1053,6 +1064,7 @@ impl App {
 	) -> Result<()> {
 		match action {
 			Action::Reset(r) => {
+				self.welcome_tab.reset(&r);
 				self.status_tab.reset(&r);
 			}
 			Action::StashDrop(_) | Action::StashPop(_) => {
@@ -1118,9 +1130,11 @@ impl App {
 				self.pull_popup.try_conflict_free_merge(rebase);
 			}
 			Action::AbortRevert | Action::AbortMerge => {
+				self.welcome_tab.revert_pending_state();
 				self.status_tab.revert_pending_state();
 			}
 			Action::AbortRebase => {
+				self.welcome_tab.abort_rebase();
 				self.status_tab.abort_rebase();
 			}
 			Action::UndoCommit => {
