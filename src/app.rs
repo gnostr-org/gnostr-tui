@@ -364,7 +364,7 @@ impl App {
 				key_config.clone(),
 			),
             //tab
-			tab: 3,
+			tab: 0,
 			queue,
 			theme,
 			options,
