@@ -32,7 +32,7 @@ easy-cast = "0.5"
 filetreelist = { path = "./filetreelist"}
 fuzzy-matcher = "0.3"
 gh-emoji = { version = "1.0", optional = true }
-git-version = { version = "0.3.9", path = "vendor/git-version" }
+git-version = { path = "vendor/git-version" }
 git2 = { version = "0.18.0" }
 indexmap = "1.9"
 itertools = "0.12"
