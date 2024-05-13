@@ -1,17 +1,20 @@
 [package]
 name = "gnostr-tui"
-version = "0.0.5"
 authors = ["gnostr <admin@gnostr.org>", "extrawurst <mail@rusticorn.com>"]
 description = "blazing fast terminal-ui for git"
-edition = "2021"
-rust-version = "1.70"
 exclude = [".github/*", ".vscode/*", "assets/*"]
-homepage = "https://github.com/extrawurst/gitui"
-repository = "https://github.com/extrawurst/gitui"
 readme = "README.md"
-license = "MIT"
 categories = ["command-line-utilities"]
 keywords = ["git", "gui", "cli", "terminal", "ui", "gnostr"]
+
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
 
 [dependencies]
 anyhow = "1.0"
@@ -76,8 +79,8 @@ timing = ["scopetime/enabled"]
 trace-libgit = ["asyncgit/trace-libgit"]
 vendor-openssl = ["asyncgit/vendor-openssl"]
 
-[workspace]
-members = ["asyncgit", "filetreelist", "git2-hooks", "git2-testing", "scopetime"]
+#[workspace]
+#members = ["asyncgit", "filetreelist", "git2-hooks", "git2-testing", "scopetime"]
 
 [profile.release]
 lto = true
@@ -89,3 +92,5 @@ codegen-units = 1
 # makes their debug profile slow
 [profile.dev.package."ratatui"]
 opt-level = 3
+
+#[workspace]
