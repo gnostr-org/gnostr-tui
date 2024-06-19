@@ -13,6 +13,7 @@ use std::{
 };
 
 pub struct CliArgs {
+	pub secret: String,
 	pub theme: PathBuf,
 	pub repo_path: RepoPath,
 	pub notify_watcher: bool,
@@ -57,7 +58,13 @@ pub fn process_cmdline() -> Result<CliArgs> {
 	let notify_watcher: bool =
 		*arg_matches.get_one("watcher").unwrap_or(&false);
 
+
+	let secret = arg_matches
+		.get_one::<String>("secret")
+		.map_or_else(|| String::from("secret"), String::from);
+
 	Ok(CliArgs {
+		secret,
 		theme,
 		repo_path,
 		notify_watcher,
@@ -79,6 +86,13 @@ fn app() -> ClapApp {
 
 {all-args}{after-help}
 		",
+		)
+		.arg(
+			Arg::new("secret")
+				.help("Set the color theme (defaults to theme.ron)")
+				.long("sec")
+				.value_name("SECRET")
+				.num_args(1),
 		)
 		.arg(
 			Arg::new("theme")
