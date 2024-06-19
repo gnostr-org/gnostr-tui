@@ -107,6 +107,7 @@ pub struct App {
 	popup_stack: PopupStack,
 	options: SharedOptions,
 	repo_path_text: String,
+	secret: String,
 
 	// "Flags"
 	requires_redraw: Cell<bool>,
@@ -118,6 +119,7 @@ impl App {
 	///
 	#[allow(clippy::too_many_lines)]
 	pub fn new(
+		secret: String,
 		repo: RepoPathRef,
 		sender: &Sender<AsyncGitNotification>,
 		sender_app: &Sender<AsyncAppNotification>,
@@ -138,6 +140,7 @@ impl App {
 		let tab = options.borrow().current_tab();
 
 		let mut app = Self {
+			secret,
 			input,
 			reset: ConfirmComponent::new(
 				queue.clone(),

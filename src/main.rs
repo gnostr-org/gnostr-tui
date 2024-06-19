@@ -213,6 +213,8 @@ fn run_app(
 	let spinner_ticker = tick(SPINNER_INTERVAL);
 
 	let mut app = App::new(
+
+		secret.clone(),
 		RefCell::new(repo),
 		&tx_git,
 		&tx_app,
