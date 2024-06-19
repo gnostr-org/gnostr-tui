@@ -86,7 +86,7 @@ check: fmt clippy test deny
 deny:
 	cargo deny check
 
-install:
+install:## 	install
 	cargo install --path "." --offline --locked
 
 install-timing:
