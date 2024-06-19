@@ -135,9 +135,11 @@ fn main() -> Result<()> {
 	//TODO: prompt to generate nostr privkey
 	//TODO: and add to git config
 
+        //not a nostr secret
 	let key_config = KeyConfig::init()
 		.map_err(|e| eprintln!("KeyConfig loading error: {e}"))
 		.unwrap_or_default();
+
 	let theme = Theme::init(&cliargs.theme);
 
 	setup_terminal()?;
@@ -148,6 +150,9 @@ fn main() -> Result<()> {
 	set_panic_handlers()?;
 
 	let mut terminal = start_terminal(io::stdout())?;
+
+	let     secret = cliargs.secret;
+
 	let mut repo_path = cliargs.repo_path;
 	let input = Input::new();
 
@@ -160,6 +165,7 @@ fn main() -> Result<()> {
 	loop {
 		let quit_state = run_app(
 			app_start,
+			secret.clone(),
 			repo_path.clone(),
 			theme.clone(),
 			key_config.clone(),
@@ -181,6 +187,7 @@ fn main() -> Result<()> {
 
 fn run_app(
 	app_start: Instant,
+	secret: String,
 	repo: RepoPath,
 	theme: Theme,
 	key_config: KeyConfig,
