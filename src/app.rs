@@ -120,6 +120,7 @@ impl App {
 	#[allow(clippy::too_many_lines)]
 	pub fn new(
 		secret: String,
+		tags: String,
 		repo: RepoPathRef,
 		sender: &Sender<AsyncGitNotification>,
 		sender_app: &Sender<AsyncAppNotification>,
