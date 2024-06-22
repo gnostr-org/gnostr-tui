@@ -124,27 +124,20 @@ fn main() -> Result<()> {
 	let app_start = Instant::now();
 
 	let cliargs = process_cmdline()?;
-	print!("secret={}\n", format!("{:}", cliargs.secret));
-	print!("tag={}\n", format!("{:}", cliargs.tag));
-	print!("t={}\n", format!("{:}", cliargs.t));
 
 	asyncgit::register_tracing_logging();
 
 	if !valid_path(&cliargs.repo_path) {
 		//TODO: gnostr-cli init
 		bail!("invalid path\nplease run gnostr-tui inside of a non-bare git repository");
-	} else {
-		print!("{}\n", format!("{:?}", cliargs.repo_path));
 	}
 
 	//TODO: prompt to generate nostr privkey
 	//TODO: and add to git config
 
-	//not a nostr secret
 	let key_config = KeyConfig::init()
 		.map_err(|e| eprintln!("KeyConfig loading error: {e}"))
 		.unwrap_or_default();
-
 	let theme = Theme::init(&cliargs.theme);
 
 	setup_terminal()?;
@@ -155,11 +148,6 @@ fn main() -> Result<()> {
 	set_panic_handlers()?;
 
 	let mut terminal = start_terminal(io::stdout())?;
-
-	let secret = cliargs.secret;
-	let tags = cliargs.tag;
-	let ts = cliargs.t;
-
 	let mut repo_path = cliargs.repo_path;
 	let input = Input::new();
 
@@ -172,8 +160,6 @@ fn main() -> Result<()> {
 	loop {
 		let quit_state = run_app(
 			app_start,
-			secret.clone(),
-			tags.clone(),
 			repo_path.clone(),
 			theme.clone(),
 			key_config.clone(),
@@ -195,8 +181,6 @@ fn main() -> Result<()> {
 
 fn run_app(
 	app_start: Instant,
-	secret: String,
-	tags: String,
 	repo: RepoPath,
 	theme: Theme,
 	key_config: KeyConfig,
@@ -222,8 +206,6 @@ fn run_app(
 	let spinner_ticker = tick(SPINNER_INTERVAL);
 
 	let mut app = App::new(
-		secret.clone(),
-		tags.clone(),
 		RefCell::new(repo),
 		&tx_git,
 		&tx_app,

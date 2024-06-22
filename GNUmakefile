@@ -110,7 +110,7 @@ help:## 	help
 ##	:
 ## RUSTUP
 
-rustup-install: rustup-install-stable ## 	rustup-install
+rustup-install:rustup-install-stable## 	rustup-install
 rustup-install-stable:## 	rustup-install-stable
 	[ -x "$(shell command -v $(APT_GET))" ] && sudo $(APT_GET) -y install musl-tools || \
     [ -x "$(shell command -v $(BREW))" ] && $(BREW) install filosottile/musl-cross/musl-cross || true
@@ -153,6 +153,8 @@ rustup-target-add:## 	rustup-target-add
 cargo-b:## 	cargo-b
 	[ -x "$(shell command -v $(RUSTUP))" ] || $(MAKE) rustup-install-stable
 	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) build
+cargo-br:cargo-build-release
+cargo-build-release:cargo-b-release
 cargo-b-release:## 	cargo-b-release
 	[ -x "$(shell command -v $(RUSTUP))" ] || $(MAKE) rustup-install-stable
 	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) build --release
@@ -162,7 +164,7 @@ cargo-c:## 	cargo-c
 install:cargo-install## 	install
 cargo-i:## 	cargo-i
 	[ -x "$(shell command -v $(RUSTC))" ] || $(MAKE) rustup-install-stable
-	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) install --path .
+	[ -x "$(shell command -v $(CARGO))" ] && $(CARGO) install --path . --force
 
 .PHONY:man ## :)
 man:

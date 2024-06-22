@@ -1,21 +1,33 @@
 [package]
 name = "gnostr-tui"
-version = "0.0.5"
 authors = ["gnostr <admin@gnostr.org>", "extrawurst <mail@rusticorn.com>"]
 description = "blazing fast terminal-ui for git"
-edition = "2021"
-rust-version = "1.70"
 exclude = [".github/*", ".vscode/*", "assets/*"]
-homepage = "https://github.com/extrawurst/gitui"
-repository = "https://github.com/extrawurst/gitui"
 readme = "README.md"
-license = "MIT"
 categories = ["command-line-utilities"]
-keywords = ["git", "gui", "cli", "terminal", "ui", "gnostr"]
+
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
+
+## git tui
+[[bin]]
+name = "git-tui"
+path = "src/main.rs"
+
+## gnostr-tui
+[[bin]]
+name = "gnostr-tui"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0"
-asyncgit = { path = "./asyncgit", version = "0.24", default-features = false }
+asyncgit = { path = "./asyncgit", default-features = false }
 backtrace = "0.3"
 bitflags = "1.3"
 bugreport = "0.5"
@@ -27,11 +39,11 @@ crossbeam-channel = "0.5"
 crossterm = { version = "0.26.1", features = ["serde"] }
 dirs = "5.0"
 easy-cast = "0.5"
-filetreelist = { path = "./filetreelist", version = "0.5" }
+filetreelist = { path = "./filetreelist"}
 fuzzy-matcher = "0.3"
 gh-emoji = { version = "1.0", optional = true }
-git-version = { version = "0.3.9", path = "vendor/git-version" }
-git2 = { version = "0.17.2", path = "vendor/git2" }
+git-version = { path = "vendor/git-version" }
+git2 = { version = "0.18.0" }
 indexmap = "1.9"
 itertools = "0.12"
 log = "0.4"
@@ -42,7 +54,7 @@ ratatui = { version = "0.21", default-features = false, features = ['crossterm',
 rayon-core = "1.11"
 ron = "0.8"
 scopeguard = "1.2"
-scopetime = { path = "./scopetime", version = "0.1" }
+scopetime = { path = "./scopetime"}
 serde = "1.0"
 shellexpand = "3.1"
 simplelog = { version = "0.12", default-features = false }
@@ -76,16 +88,18 @@ timing = ["scopetime/enabled"]
 trace-libgit = ["asyncgit/trace-libgit"]
 vendor-openssl = ["asyncgit/vendor-openssl"]
 
-[workspace]
-members = ["asyncgit", "filetreelist", "git2-hooks", "git2-testing", "scopetime"]
+#[workspace]
+#members = ["asyncgit", "filetreelist", "git2-hooks", "git2-testing", "scopetime"]
 
-[profile.release]
-lto = true
-opt-level = 'z'   # Optimize for size.
-codegen-units = 1
-
-# make debug build as fast as release
-# usage of utf8 encoding inside tui
-# makes their debug profile slow
-[profile.dev.package."ratatui"]
-opt-level = 3
+## [profile.release]
+## lto = true
+## opt-level = 'z'   # Optimize for size.
+## codegen-units = 1
+##
+## # make debug build as fast as release
+## # usage of utf8 encoding inside tui
+## # makes their debug profile slow
+## [profile.dev.package."ratatui"]
+## opt-level = 3
+##
+## #[workspace]

@@ -1,7 +1,6 @@
 use crate::bug_report;
 use anyhow::{anyhow, Result};
 use asyncgit::sync::RepoPath;
-use clap::ArgAction;
 use clap::{
 	crate_authors, crate_description, crate_name, crate_version, Arg,
 	Command as ClapApp,
@@ -14,9 +13,6 @@ use std::{
 };
 
 pub struct CliArgs {
-	pub secret: String,
-	pub tag: String,
-	pub t: String,
 	pub theme: PathBuf,
 	pub repo_path: RepoPath,
 	pub notify_watcher: bool,
@@ -61,22 +57,7 @@ pub fn process_cmdline() -> Result<CliArgs> {
 	let notify_watcher: bool =
 		*arg_matches.get_one("watcher").unwrap_or(&false);
 
-	let secret = arg_matches
-		.get_one::<String>("secret")
-		.map_or_else(|| String::from("secret"), String::from);
-
-	let tag = arg_matches
-		.get_one::<String>("tag")
-		.map_or_else(|| String::from("tag"), String::from);
-
-	let t = arg_matches
-		.get_one::<String>("t")
-		.map_or_else(|| String::from("t"), String::from);
-
 	Ok(CliArgs {
-		secret,
-		tag, //TODO Vec<String>
-		t,   //TODO Vec<String>
 		theme,
 		repo_path,
 		notify_watcher,
@@ -100,46 +81,9 @@ fn app() -> ClapApp {
 		",
 		)
 		.arg(
-			Arg::new("secret")
-				.help("a sha256 hash") //TODO nsec...
-				.long("sec")
-				.value_name("SECRET")
-				.default_missing_value("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
-				.num_args(1)
-				.global(true)
-		)
-		.subcommand(clap::Command::new("test"))
-		.subcommand(clap::Command::new("do-stuff"))
-		.arg(
-			Arg::new("tag")
-				.help("--tag <string> <string>")
-				.long("tag")
-				//.alias("-tag")
-				.value_names(["TAG", "TAG_VALUE"])
-				.default_missing_value("gnostr")
-				.num_args(2..)
-				.default_value("tag_default")
-				.value_delimiter(' ')
-				.action(ArgAction::Append)
-				//.multiple(true),
-		)
-		.arg(
-			Arg::new("t")
-				.help("-t <string>")
-				.long("t")
-				.short('t')
-				//.alias("-t")
-				.value_name("T")
-				.num_args(1..)
-				.default_value("t_default")
-				.default_missing_value("gnostr")
-				.value_delimiter(' ')
-				.action(ArgAction::Append)
-				//.multiple(true),
-		)
-		.arg(
 			Arg::new("theme")
 				.help("Set the color theme (defaults to theme.ron)")
+				.short('t')
 				.long("theme")
 				.value_name("THEME")
 				.num_args(1),

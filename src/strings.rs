@@ -63,6 +63,12 @@ pub fn title_diff(_key_config: &SharedKeyConfig) -> String {
 pub fn title_index(_key_config: &SharedKeyConfig) -> String {
 	"Staged Changes".to_string()
 }
+pub fn tab_welcome(key_config: &SharedKeyConfig) -> String {
+	format!(
+		"Gnostr [{}]",
+		key_config.get_hint(key_config.keys.tab_welcome)
+	)
+}
 pub fn tab_status(key_config: &SharedKeyConfig) -> String {
 	format!(
 		"Status [{}]",

@@ -25,7 +25,7 @@ use crate::{
 	},
 	setup_popups,
 	strings::{self, ellipsis_trim_start, order},
-	tabs::{FilesTab, Revlog, StashList, Stashing, Status},
+	tabs::{FilesTab, Revlog, StashList, Stashing, Status, Welcome},
 	try_or_popup,
 	ui::style::{SharedTheme, Theme},
 	AsyncAppNotification, AsyncNotification,
@@ -47,7 +47,7 @@ use ratatui::{
 		Alignment, Constraint, Direction, Layout, Margin, Rect,
 	},
 	text::{Line, Span},
-	widgets::{Block, Borders, Paragraph, Tabs},
+	widgets::{Block, Borders, Paragraph, Tabs}, //Tabs
 	Frame,
 };
 use std::{
@@ -77,7 +77,9 @@ pub struct App {
 	stashmsg_popup: StashMsgComponent,
 	inspect_commit_popup: InspectCommitComponent,
 	compare_commits_popup: CompareCommitsComponent,
+
 	external_editor_popup: ExternalEditorComponent,
+
 	revision_files_popup: RevisionFilesPopup,
 	fuzzy_find_popup: FuzzyFindPopup,
 	log_search_popup: LogSearchPopupComponent,
@@ -93,21 +95,33 @@ pub struct App {
 	submodule_popup: SubmodulesListComponent,
 	tags_popup: TagListComponent,
 	reset_popup: ResetPopupComponent,
-	cmdbar: RefCell<CommandBar>,
-	tab: usize,
+
+	cmdbar: RefCell<CommandBar>, //cmdbar
+
+    //Tabs
+
+	tab: usize, //tab
+
 	revlog: Revlog,
+
+	welcome_tab: Welcome,
+
 	status_tab: Status,
+
 	stashing_tab: Stashing,
+
 	stashlist_tab: StashList,
+
 	files_tab: FilesTab,
+
 	queue: Queue,
 	theme: SharedTheme,
 	key_config: SharedKeyConfig,
 	input: Input,
 	popup_stack: PopupStack,
 	options: SharedOptions,
-	repo_path_text: String,
-	secret: String,
+
+	repo_path_text: String, //gnostr-chat topic
 
 	// "Flags"
 	requires_redraw: Cell<bool>,
@@ -119,8 +133,6 @@ impl App {
 	///
 	#[allow(clippy::too_many_lines)]
 	pub fn new(
-		secret: String,
-		tags: String,
 		repo: RepoPathRef,
 		sender: &Sender<AsyncGitNotification>,
 		sender_app: &Sender<AsyncAppNotification>,
@@ -138,10 +150,9 @@ impl App {
 		let key_config = Rc::new(key_config);
 		let options = Options::new(repo.clone());
 
-		let tab = options.borrow().current_tab();
+		let tab = options.borrow().current_tab(); //tab
 
 		let mut app = Self {
-			secret,
 			input,
 			reset: ConfirmComponent::new(
 				queue.clone(),
@@ -310,6 +321,16 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
+            //welcome
+			welcome_tab: Welcome::new(
+				repo.clone(),
+				&queue,
+				sender,
+				theme.clone(),
+				key_config.clone(),
+				options.clone(),
+			),
+            //status
 			status_tab: Status::new(
 				repo.clone(),
 				&queue,
@@ -318,6 +339,7 @@ impl App {
 				key_config.clone(),
 				options.clone(),
 			),
+            //tab
 			stashing_tab: Stashing::new(
 				&repo,
 				sender,
@@ -325,12 +347,14 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
+            //tab 
 			stashlist_tab: StashList::new(
 				repo.clone(),
 				&queue,
 				theme.clone(),
 				key_config.clone(),
 			),
+            //tab
 			files_tab: FilesTab::new(
 				repo.clone(),
 				sender_app,
@@ -339,6 +363,7 @@ impl App {
 				theme.clone(),
 				key_config.clone(),
 			),
+            //tab
 			tab: 0,
 			queue,
 			theme,
@@ -390,11 +415,12 @@ impl App {
 		if !fullscreen_popup_open {
 			//TODO: macro because of generic draw call
 			match self.tab {
-				0 => self.status_tab.draw(f, chunks_main[1])?,
-				1 => self.revlog.draw(f, chunks_main[1])?,
-				2 => self.files_tab.draw(f, chunks_main[1])?,
-				3 => self.stashing_tab.draw(f, chunks_main[1])?,
-				4 => self.stashlist_tab.draw(f, chunks_main[1])?,
+				0 => self.welcome_tab.draw(f, chunks_main[1])?,
+				1 => self.status_tab.draw(f, chunks_main[1])?,
+				2 => self.revlog.draw(f, chunks_main[1])?,
+				3 => self.files_tab.draw(f, chunks_main[1])?,
+				4 => self.stashing_tab.draw(f, chunks_main[1])?,
+				5 => self.stashlist_tab.draw(f, chunks_main[1])?,
 				_ => bail!("unknown tab"),
 			};
 		}
@@ -433,6 +459,9 @@ impl App {
 					self.toggle_tabs(true)?;
 					NeedsUpdate::COMMANDS
 				} else if key_match(
+					k,
+					self.key_config.keys.tab_welcome,
+				) || key_match(
 					k,
 					self.key_config.keys.tab_status,
 				) || key_match(
@@ -483,6 +512,10 @@ impl App {
 						let changes =
 							self.status_tab.get_files_changes()?;
 						self.commit.show_editor(changes)
+					//} else {
+					//	let changes =
+					//		self.welcome_tab.get_files_changes()?;
+					//	self.commit.show_editor(changes)
 					};
 
 				if let Err(e) = result {
@@ -506,6 +539,7 @@ impl App {
 		log::trace!("update");
 
 		self.commit.update();
+		self.welcome_tab.update()?;
 		self.status_tab.update()?;
 		self.revlog.update()?;
 		self.files_tab.update()?;
@@ -526,6 +560,7 @@ impl App {
 		log::trace!("update_async: {:?}", ev);
 
 		if let AsyncNotification::Git(ev) = ev {
+			self.welcome_tab.update_git(ev)?;
 			self.status_tab.update_git(ev)?;
 			self.stashing_tab.update_git(ev)?;
 			self.revlog.update_git(ev)?;
@@ -564,7 +599,8 @@ impl App {
 
 	///
 	pub fn any_work_pending(&self) -> bool {
-		self.status_tab.anything_pending()
+		self.welcome_tab.anything_pending()
+		    || self.status_tab.anything_pending()
 			|| self.revlog.any_work_pending()
 			|| self.stashing_tab.anything_pending()
 			|| self.files_tab.anything_pending()
@@ -623,6 +659,7 @@ impl App {
 			options_popup,
 			help,
 			revlog,
+			welcome_tab,
 			status_tab,
 			files_tab,
 			stashing_tab,
@@ -684,8 +721,13 @@ impl App {
 		false
 	}
 
+    //
 	fn get_tabs(&mut self) -> Vec<&mut dyn Component> {
 		vec![
+
+            //welcome dashboard
+            &mut self.welcome_tab,
+
 			&mut self.status_tab,
 			&mut self.revlog,
 			&mut self.files_tab,
@@ -706,7 +748,9 @@ impl App {
 	}
 
 	fn switch_tab(&mut self, k: &KeyEvent) -> Result<()> {
-		if key_match(k, self.key_config.keys.tab_status) {
+		if key_match(k, self.key_config.keys.tab_welcome) {
+			self.switch_to_tab(&AppTabs::Welcome)?;
+		} else if key_match(k, self.key_config.keys.tab_status) {
 			self.switch_to_tab(&AppTabs::Status)?;
 		} else if key_match(k, self.key_config.keys.tab_log) {
 			self.switch_to_tab(&AppTabs::Log)?;
@@ -739,11 +783,12 @@ impl App {
 
 	fn switch_to_tab(&mut self, tab: &AppTabs) -> Result<()> {
 		match tab {
-			AppTabs::Status => self.set_tab(0)?,
-			AppTabs::Log => self.set_tab(1)?,
-			AppTabs::Files => self.set_tab(2)?,
-			AppTabs::Stashing => self.set_tab(3)?,
-			AppTabs::Stashlist => self.set_tab(4)?,
+			AppTabs::Welcome => self.set_tab(0)?,
+			AppTabs::Status => self.set_tab(1)?, //1
+			AppTabs::Log => self.set_tab(2)?, //2
+			AppTabs::Files => self.set_tab(3)?, //3
+			AppTabs::Stashing => self.set_tab(4)?, //4
+			AppTabs::Stashlist => self.set_tab(5)?, //5
 		}
 		Ok(())
 	}
@@ -766,6 +811,7 @@ impl App {
 		//TODO: make this a queue event?
 		//NOTE: set when any tree component changed selection
 		if flags.contains(NeedsUpdate::DIFF) {
+			self.welcome_tab.update_diff()?;
 			self.status_tab.update_diff()?;
 			self.inspect_commit_popup.update_diff()?;
 			self.compare_commits_popup.update_diff()?;
@@ -922,6 +968,7 @@ impl App {
 				flags.insert(NeedsUpdate::ALL);
 			}
 			InternalEvent::StatusLastFileMoved => {
+				self.welcome_tab.last_file_moved()?;
 				self.status_tab.last_file_moved()?;
 			}
 			InternalEvent::OpenFuzzyFinder(contents, target) => {
@@ -937,11 +984,13 @@ impl App {
 			InternalEvent::OptionSwitched(o) => {
 				match o {
 					AppOption::StatusShowUntracked => {
+						self.welcome_tab.update()?;
 						self.status_tab.update()?;
 					}
 					AppOption::DiffContextLines
 					| AppOption::DiffIgnoreWhitespaces
 					| AppOption::DiffInterhunkLines => {
+						self.welcome_tab.update_diff()?;
 						self.status_tab.update_diff()?;
 					}
 				}
@@ -1015,6 +1064,7 @@ impl App {
 	) -> Result<()> {
 		match action {
 			Action::Reset(r) => {
+				self.welcome_tab.reset(&r);
 				self.status_tab.reset(&r);
 			}
 			Action::StashDrop(_) | Action::StashPop(_) => {
@@ -1080,9 +1130,11 @@ impl App {
 				self.pull_popup.try_conflict_free_merge(rebase);
 			}
 			Action::AbortRevert | Action::AbortMerge => {
+				self.welcome_tab.revert_pending_state();
 				self.status_tab.revert_pending_state();
 			}
 			Action::AbortRebase => {
+				self.welcome_tab.abort_rebase();
 				self.status_tab.abort_rebase();
 			}
 			Action::UndoCommit => {
@@ -1200,6 +1252,9 @@ impl App {
 	}
 
 	//TODO: make this dynamic
+	//TODO: make this dynamic
+	//TODO: make this dynamic
+	//TODO: make this dynamic
 	fn draw_top_bar<B: Backend>(&self, f: &mut Frame<B>, r: Rect) {
 		const DIVIDER_PAD_SPACES: usize = 2;
 		const SIDE_PADS: usize = 2;
@@ -1211,6 +1266,7 @@ impl App {
 		});
 
 		let tab_labels = [
+			Span::raw(strings::tab_welcome(&self.key_config)),
 			Span::raw(strings::tab_status(&self.key_config)),
 			Span::raw(strings::tab_log(&self.key_config)),
 			Span::raw(strings::tab_files(&self.key_config)),
