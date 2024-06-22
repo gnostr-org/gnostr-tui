@@ -12,28 +12,24 @@
 ## [workspace]
 
 [package]
-edition = "2021"
 name = "git-version"
-version = "0.3.9"
 authors = [
     "Mara Bos <m-ou.se@m-ou.se>",
     "Maarten de Vries <maarten@de-vri.es>",
     "David Roundy <daveroundy@gmail.com>",
 ]
 description = "Compile the git version (tag name, or hash otherwise) and dirty state into your program."
-documentation = "https://docs.rs/git-version/"
 readme = "README.md"
-keywords = [
-    "git",
-    "version",
-    "build",
-]
-categories = [
-    "development-tools",
-    "development-tools::build-utils",
-]
-license = "BSD-2-Clause"
-repository = "https://github.com/fusion-engineering/rust-git-version"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+#license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
+
+
 
 [dependencies.git-version-macro]
 version = "=0.3.9"

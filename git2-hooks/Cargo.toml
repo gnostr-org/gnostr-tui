@@ -1,16 +1,18 @@
 [package]
 name = "git2-hooks"
-version = "0.3.1"
 authors = ["extrawurst <mail@rusticorn.com>"]
-edition = "2021"
 description = "adds git hooks support based on git2-rs"
-homepage = "https://github.com/extrawurst/gitui"
-repository = "https://github.com/extrawurst/gitui"
-documentation = "https://docs.rs/git2-hooks/"
 readme = "README.md"
-license = "MIT"
 categories = ["development-tools"]
-keywords = ["git"]
+
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+keywords = { workspace = true }
 
 [dependencies]
 git2 = ">=0.17"
