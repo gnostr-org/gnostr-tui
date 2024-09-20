@@ -33,6 +33,64 @@ pub fn process_cmdline() -> Result<CliArgs> {
 		setup_logging()?;
 	}
 
+    //TODO: gnostr-tui cli sub-command
+	if arg_matches.get_flag("cli") {
+		//setup_logging()?;
+        print!("cli!!");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("sec") {
+		//setup_logging()?;
+        print!("handle --sec");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("tag") {
+		//setup_logging()?;
+        print!("handle a --tag");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("t") {
+		//setup_logging()?;
+        print!("handle a -t");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("envelope") {
+		//setup_logging()?;
+        print!("handle a --envelope");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("created-at") {
+		//setup_logging()?;
+        print!("handle --created-at");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("e") {
+		//setup_logging()?;
+        print!("handle -e");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("p") {
+		//setup_logging()?;
+        print!("handle -p");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("pow") {
+		//setup_logging()?;
+        print!("handle --pow");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("dm") {
+		//setup_logging()?;
+        print!("handle --dm");
+        std::process::exit(0);
+	}
+	if arg_matches.get_flag("kind") {
+		//setup_logging()?;
+        print!("handle --kind");
+        std::process::exit(0);
+	}
+
+
 	let workdir =
 		arg_matches.get_one::<String>("workdir").map(PathBuf::from);
 	let gitdir = arg_matches
@@ -86,6 +144,12 @@ fn app() -> ClapApp {
 				.value_name("THEME_FILE")
 				.default_value("theme.ron")
 				.num_args(1),
+		)
+		.arg(
+			Arg::new("cli")
+				.help("Stores logging output into a cache directory")
+				.long("cli")
+				.num_args(0),
 		)
 		.arg(
 			Arg::new("logging")
